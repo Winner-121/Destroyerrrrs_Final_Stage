@@ -209,12 +209,24 @@ def measure(det: Detections, img_shape, img: np.ndarray | None = None) -> Measur
         ground_y = float(np.median([w.bottom for w in wheels]))
     elif M.bottom_line is not None:
         ground_y = (M.bottom_line.y1 + M.bottom_line.y2) / 2
-    top_y = None
-    if cargo:
-        top_y = min(min(b.xyxy[1] for b in cargo), tb.xyxy[1])
-    elif det.truck_mask is not None:
+    # cargo top = highest point of anything riding on the truck: the cargo boxes, the truck mask, and any
+    # other detection that rests on the truck (bottom inside the truck box, >= 60 % horizontal overlap).
+    # A tall machine on a low-loader is often not a "cargo" box and not part of the COCO truck mask.
+    tops = [float(tb.xyxy[1])]
+    if det.truck_mask is not None:
         ys = np.flatnonzero(det.truck_mask.any(axis=1))
-        top_y = float(ys.min()) if len(ys) else None
+        if len(ys):
+            tops.append(float(ys.min()))
+    tops += [float(b.xyxy[1]) for b in cargo]
+    for b in det.boxes:
+        if b.label == "wheel" or b is tb:
+            continue
+        ix = max(0, min(b.xyxy[2], tb.xyxy[2]) - max(b.xyxy[0], tb.xyxy[0]))
+        rests = tb.xyxy[1] <= b.bottom <= tb.xyxy[3] + 0.05 * tb.h
+        if ix >= 0.6 * b.w and rests and b.xyxy[1] < tb.xyxy[1] and b.conf >= 0.25:
+            tops.append(float(b.xyxy[1]))
+            M.notes.append(f"height: top from {b.label} box above the truck")
+    top_y = min(tops) if cargo or det.truck_mask is not None else None
     if ground_y and top_y is not None and M.scale_m_per_px:
         M.height_m = round((ground_y - top_y) * M.scale_m_per_px, 2)
         M.height_conf = round(0.8 if wheels else 0.4, 2)
