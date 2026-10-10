@@ -76,21 +76,22 @@ python eval/run_eval.py         # precision/recall per check, night subset, late
 
 Deck: `deck/LoadSafetyGate_deck.pptx` (built by `deck/build_deck.js`), PDF alongside.
 
-Results on the 43 test images labelled by the team so far (labelling continues; the table is regenerated from `eval/out/metrics.json`):
+Results on the 101 test images labelled by the team (19 of 120 were marked not a truck or left unlabelled). Regenerated from `eval/out/metrics.json`:
 
 | Check | Precision | Recall | tp / fp / fn |
 |---|---|---|---|
-| Tilted body | 0.00 | 0.00 | 0/2/2 |
-| Rear overhang | 0.00 | 0.00 | 0/1/4 |
-| Side overhang | n/a | 0.00 | 0/0/1 |
-| Over height | 0.00 | 0.00 | 0/1/4 |
-| Clean images with no false alarm | 18 of 20 | | specificity 90% |
+| Tilted body | 0.33 | 0.09 | 1/2/10 |
+| Rear overhang | 0.00 | 0.00 | 0/1/7 |
+| Side overhang | n/a | 0.00 | 0/0/6 |
+| Over height | 0.33 | 0.06 | 1/2/16 |
+| Clean trucks with no false alarm | 41 of 44 | | specificity 93% |
 
-Reading: on uncontrolled public photos (most labelled images are three-quarter views) the geometric checks are deliberately
-conservative. They skip or pass rather than alarm, so clean trucks are rarely flagged, but the few labelled positives were missed.
-The detector stages are robust (truck found on 86 to 97 percent of real truck photos, night included); the measurement stages need
-the controlled geometry of a fixed gate camera, which is the product configuration. Mean latency 0.25 s per image on CPU.
-Roll error in degrees requires the tilt rig photos (`data/rig`), not yet available.
+Reading: 61 of the 101 labelled photos are three-quarter views and 16 are rear or front views. The measurement stages only
+report when a side or rear view gives them a scale object, so on this uncontrolled set they are deliberately conservative:
+clean trucks are rarely flagged (93% specificity) but only 2 of 41 labelled positives were caught.
+The detector stages are robust (truck found on 86 to 97 percent of real truck photos, night included). The measurement stages
+need the controlled geometry of a fixed gate camera, which is the product configuration. Mean latency 0.20 s per image on CPU.
+Roll error in degrees requires the tilt rig photos (`data/rig`), not available at submission.
 
 ### Known failure cases
 - Front-only or three-quarter views: body edges are foreshortened, roll confidence is reduced.
