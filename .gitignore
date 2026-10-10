@@ -4,8 +4,8 @@ __pycache__/
 *.pt
 runs/
 data/raw/*
-data/test/*
-data/night_rain/*
+# data/test and data/night_rain are committed (CC-licensed, listed in SOURCES.csv)
+
 data/rig/*
 !data/**/.gitkeep
 !data/SOURCES.csv
