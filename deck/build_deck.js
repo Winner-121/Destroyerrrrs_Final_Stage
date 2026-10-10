@@ -121,7 +121,7 @@ pres.addSection({ title: "Business" });
 s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Business" });
 s.addText("Pilot budget and payback, every assumption on the slide", { placeholder: "title" });
 const rows3 = [[hdr("Pilot cost, 3 months"), hdr("Amount"), hdr("Assumption")],
-  ["Team: 2 engineers + 1 ops, part time", "[confirm]", "local salaries, 3 months"], ["Cameras and mounts, 3 gates", "$600", "$200 per gate, one-off"], ["Hosting", "$270", "one warm CPU server, $90 per month"],
+  ["Team: 3 people, 3 months", "$7,200", "$800 per person per month"], ["Cameras and mounts, 3 gates", "$600", "$200 per gate, one-off"], ["Hosting", "$270", "one warm CPU server, $90 per month"],
   ["Labelling and data", "$500", "about 40 hours of labelling"], ["Legal and privacy review", "[confirm]", "blur at ingest, no personal data stored"]];
 s.addTable(rows3, { x: 0.5, y: 1.4, w: 6.3, colW: [2.9, 1.2, 2.2], fontSize: 12, color: C.text1, border: { type: "solid", color: THEME.colors.lt2, pt: 1 }, rowH: 0.4 });
 const rows4 = [[hdr("Avoided loss, one fleet"), hdr("Amount"), hdr("Assumption, calibrated in the pilot")],
