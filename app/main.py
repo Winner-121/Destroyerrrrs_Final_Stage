@@ -15,6 +15,7 @@ from PIL import Image, ImageOps
 
 from pipeline.run import analyse, get_detector
 from app.label import router as label_router
+from app import journal
 
 ROOT = Path(__file__).parent
 app = FastAPI(title="Load Safety Gate")
@@ -48,7 +49,7 @@ def index(request: Request):
 @app.post("/analyse")
 async def analyse_upload(file: UploadFile = File(...)):
     img = _read_image(await file.read())
-    return _respond(img)
+    return _respond(img, "upload")
 
 
 @app.get("/analyse/example/{name}")
@@ -56,7 +57,19 @@ def analyse_example(name: str):
     p = ROOT / "static" / "examples" / Path(name).name
     if not p.exists():
         return JSONResponse({"error": "no such example"}, status_code=404)
-    return _respond(cv2.imread(str(p)))
+    return _respond(cv2.imread(str(p)), f"example:{p.name}")
+
+
+@app.get("/log")
+def log(limit: int = 20):
+    """Recent inspections: ticket, time, verdict, measured values. No images are stored."""
+    return JSONResponse(journal.recent(limit))
+
+
+@app.get("/stats")
+def stats(day: str | None = None):
+    """Shift counters for one day (UTC): GO / WARN / NO-GO / CANNOT ASSESS."""
+    return JSONResponse(journal.stats(day))
 
 
 @app.get("/health")
@@ -64,7 +77,9 @@ def health():
     return {"ok": True, "device": get_detector().device}
 
 
-def _respond(img):
+def _respond(img, source: str):
     r = analyse(img)
     r["image_b64"] = _to_b64(r.pop("image"))
+    r["ticket"] = journal.record(r, source)
+    r["stats"] = journal.stats()
     return JSONResponse(r)

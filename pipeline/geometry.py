@@ -37,6 +37,7 @@ class Measurements:
     struct_lines: list = field(default_factory=list)
     ref_lines: list = field(default_factory=list)
     roll_reference: str = "none"
+    body_vs_camera_deg: float | None = None   # raw instrument reading: body verticals vs image vertical
     bottom_line: Line | None = None
     overhang_cm: float | None = None      # rear overhang in side view, side overhang in rear view
     overhang_kind: str = "none"
@@ -146,6 +147,7 @@ def measure(det: Detections, img_shape, img: np.ndarray | None = None) -> Measur
         else:
             sv = scene_vertical(img, det.truck_mask)
             M.struct_lines = bv[2]
+            M.body_vs_camera_deg = float(bv[0])
             if sv is not None and sv[1] >= 0.3:
                 M.roll_deg = bv[0] - sv[0]
                 M.roll_conf = round(min(bv[1], sv[1]) * (1.0 if M.view == "side" else 0.7), 2)

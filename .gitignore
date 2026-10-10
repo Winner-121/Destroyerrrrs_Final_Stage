@@ -13,3 +13,4 @@ data/rig/*
 eval/out/
 .env
 data/labels_store.json
+data/journal_store.json
