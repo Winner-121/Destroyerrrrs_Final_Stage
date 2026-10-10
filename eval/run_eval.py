@@ -38,11 +38,12 @@ def main():
     counts = {k: [0, 0, 0] for k in ["tilted", "side_overhang", "rear_overhang", "over_height"]}
     counts_night = {k: [0, 0, 0] for k in counts}
     roll_err, lat = [], []
+    clean_n = clean_ok = 0
     for d in IMG_DIRS:
         for p in sorted(d.glob("*.jp*g")) + sorted(d.glob("*.png")):
             lab = labels.get(p.name)
-            if not lab:
-                continue
+            if not lab or not lab.get("view"):
+                continue          # not labelled yet
             img = cv2.imread(str(p))
             t0 = time.perf_counter(); r = analyse(img); lat.append(time.perf_counter() - t0)
             cv2.imwrite(str(OUT / p.name), r.pop("image"))
@@ -67,6 +68,8 @@ def main():
                 if pred[k] and truth[k]: tgt[k][0] += 1
                 elif pred[k] and not truth[k]: tgt[k][1] += 1
                 elif not pred[k] and truth[k]: tgt[k][2] += 1
+            if all(truth[k] is False for k in truth) and all(lab.get(c) != "unclear" for c in ("roll_label", "side_overhang", "rear_overhang", "over_height")):
+                clean_n += 1; clean_ok += int(not any(pred.values()))
             if lab.get("roll_deg_true"):
                 v = ch.get("Body roll", {}).get("value", "")
                 try:
@@ -80,6 +83,8 @@ def main():
         "n_images": len(per),
         "per_check": {k: pr(*v) for k, v in counts.items()},
         "night_rain": {k: pr(*v) for k, v in counts_night.items()},
+        "clean_images": clean_n, "clean_no_false_alarm": clean_ok,
+        "false_alarm_rate_on_clean": (1 - clean_ok / clean_n) if clean_n else None,
         "roll_mae_deg": sum(roll_err) / len(roll_err) if roll_err else None,
         "roll_n": len(roll_err),
         "mean_latency_s": mean_lat,

@@ -15,11 +15,14 @@ scale:
 thresholds:                           # Uzbekistan: Cabinet of Ministers Decree No. 342 (26.12.2011), Annex 2:
                                       # oversized if height > 4.0 m, width > 2.55 m (2.6 m refrigerated),
                                       # or cargo protrudes > 2 m beyond the rear of the body. Source: gov.uz/ru/uzavtoyul/sections/view/48313
-  roll_min_conf: 0.45                 # below this the roll check is skipped, not reported
-  roll_warn_deg: 3.0
-  roll_fail_deg: 6.0
+  roll_min_conf: 0.5                 # below this the roll check is skipped, not reported
+  roll_warn_deg: 4.0
+  roll_fail_deg: 7.0
   side_overhang_fail_cm: 20           # cargo wider than body by this -> NO-GO
   rear_overhang_warn_cm: 100          # must be marked beyond this
   rear_overhang_fail_cm: 200          # legal max rear overhang
   max_height_m: 4.0                   # legal max vehicle height
+  height_margin_m: 0.4                # uncalibrated phone photos: fail only above limit + margin
+  height_min_conf: 0.6
+  overhang_min_conf: 0.5
   min_truck_box_frac: 0.15            # truck must occupy >= this fraction of image width

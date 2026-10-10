@@ -87,15 +87,15 @@ card(s, 0.5, 5.3, 12.3, 1.4, "Product version", "A fixed gate camera with known 
 
 // 6 Quality
 s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Technology" });
-s.addText("Measured on a test set we built", { placeholder: "title" });
+s.addText("Measured on a test set we built, including the bad news", { placeholder: "title" });
 const hdr = (t) => ({ text: t, options: { bold: true, color: C.background1, fill: { color: THEME.colors.dk2 }, fontSize: 12 } });
 const rows1 = [[hdr("Subset"), hdr("Images"), hdr("Truck found"), hdr("Wheels"), hdr("Scale"), hdr("Roll reported")],
   ["Car carriers", "70", "0.89", "0.60", "0.71", "0.21"], ["Flatbeds", "55", "0.87", "0.71", "0.76", "0.27"], ["Semi-trailers", "30", "0.97", "0.70", "0.83", "0.37"], ["Oversized loads", "44", "0.86", "0.50", "0.59", "0.11"], ["Night", "38", "0.97", "0.66", "0.74", "0.45"]];
 s.addTable(rows1, { x: 0.5, y: 1.4, w: 6.2, colW: [1.6, 0.9, 1.1, 0.9, 0.8, 0.9], fontSize: 12, color: C.text1, border: { type: "solid", color: THEME.colors.lt2, pt: 1 }, rowH: 0.36 });
 TB(s, "Detector hit rate on 301 licensed Commons photos (no labels needed). Night holds up: the truck mask is the most robust stage.", { x: 0.5, y: 3.7, w: 6.2, h: 0.7, fontSize: 11, color: C.text2 });
-const rows2 = [[hdr("Check"), hdr("Precision"), hdr("Recall"), hdr("n")], ["Tilted body", "pending", "pending", ""], ["Rear overhang", "pending", "pending", ""], ["Side overhang", "pending", "pending", ""], ["Over height", "pending", "pending", ""], ["Night / rain subset", "pending", "pending", "25"]];
+const rows2 = [[hdr("Check"), hdr("Precision"), hdr("Recall"), hdr("tp/fp/fn")], ["Tilted body", "0.00", "0.00", "0/2/2"], ["Rear overhang", "0.00", "0.00", "0/1/4"], ["Side overhang", "n/a", "0.00", "0/0/1"], ["Over height", "0.00", "0.00", "0/1/4"], ["Clean images, no false alarm", "18 of 20", "", "90% specificity"]];
 s.addTable(rows2, { x: 7.0, y: 1.4, w: 5.8, colW: [2.2, 1.2, 1.2, 1.2], fontSize: 12, color: C.text1, border: { type: "solid", color: THEME.colors.lt2, pt: 1 }, rowH: 0.36 });
-TB(s, "Against 120 hand-labelled images (95 day, 25 night). Numbers come from eval/run_eval.py and are filled in once labelling is complete.", { x: 7.0, y: 3.7, w: 5.8, h: 0.7, fontSize: 11, color: C.text2 });
+TB(s, "Against the 43 images labelled so far by the team (of 120). Honest result: the phone mode is conservative. It raises few false alarms on clean trucks but missed the 11 positives, which were mostly three-quarter views and car tails over an enclosed deck. This is the gap the calibrated gate camera closes.", { x: 7.0, y: 3.7, w: 5.8, h: 0.7, fontSize: 11, color: C.text2 });
 const stat = (x, big, small) => { TB(s, big, { x, y: 4.7, w: 3.9, h: 0.9, fontSize: 40, bold: true, color: THEME.colors.accent2, fontFace: THEME.headFontFace }); TB(s, small, { x, y: 5.6, w: 3.9, h: 0.8, fontSize: 12, color: C.text2 }); };
 stat(0.5, "0.19 s", "per image on 2 CPU cores, measured on the deployed server"); stat(4.7, "< $0.001", "compute per inspection; one warm server about $90 per month"); stat(8.9, "0 faces", "stored. Plates and people pixelated before anything is kept");
 

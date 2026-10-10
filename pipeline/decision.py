@@ -49,6 +49,8 @@ def decide(M: Measurements) -> Decision:
     # overhang
     if M.overhang_cm is None:
         D.checks.append(Check("Overhang", "skip", "n/a", 0, "cargo or scale not found"))
+    elif M.overhang_conf < T["overhang_min_conf"] or M.view == "unknown":
+        D.checks.append(Check("Overhang", "skip", f"({M.overhang_cm:.0f} cm)", M.overhang_conf, "low confidence: needs a clear side or rear view"))
     else:
         v = M.overhang_cm
         if M.overhang_kind == "side":
@@ -67,9 +69,17 @@ def decide(M: Measurements) -> Decision:
     # height
     if M.height_m is None:
         D.checks.append(Check("Height", "skip", "n/a", 0, "no ground line or scale"))
+    elif M.height_conf < T["height_min_conf"] or M.view != "side":
+        D.checks.append(Check("Height", "skip", f"({M.height_m:.2f} m)", M.height_conf, "low confidence: needs a side view with two wheels found"))
     else:
-        st = "fail" if M.height_m > T["max_height_m"] else "pass"
-        D.checks.append(Check("Height", st, f"{M.height_m:.2f} m", M.height_conf, f"limit {T['max_height_m']} m"))
+        lim = T["max_height_m"]; mar = T["height_margin_m"]
+        if M.height_m > lim + mar:
+            st, why = "fail", f"> {lim} m limit (+{mar} m margin for uncalibrated photo)"
+        elif M.height_m > lim:
+            st, why = "warn", f"near the {lim} m limit, verify at the gate"
+        else:
+            st, why = "pass", f"limit {lim} m"
+        D.checks.append(Check("Height", st, f"{M.height_m:.2f} m", M.height_conf, why))
 
     statuses = {c.status for c in D.checks}
     if "fail" in statuses:

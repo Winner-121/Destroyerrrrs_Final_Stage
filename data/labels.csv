@@ -1,25 +1,25 @@
 filename,view,roll_label,roll_deg_true,side_overhang,rear_overhang,over_height,notes
-car_carrier_2010_11_29_Essen_145426_5221211648_jpg.jpg,,,,,,,
-car_carrier_Mercedes_Benz_E_63_AMG_2014_14386327465_jpg.jpg,,,,,,,
-car_carrier_200km_de_Buenos_Aires_2025_Domingo_47_jpg.jpg,,,,,,,
-car_carrier_Trailer_with_cars_in_Dnipro_jpg.jpg,,,,,,,
-car_carrier_Ram_3500_DS_Towing_BMW_X5_F15_JPG.jpg,,,,,,,
-car_carrier_SinoTruk_HOWO_Iran_jpg.jpg,,,,,,,
-car_carrier_DSC09858_Flickr_jns001_jpg.jpg,,,,,,,
-car_carrier_2023_F_350_SD_XL_Columbia_Co_Rest_Area_2_jpg.jpg,,,,,,,
-car_carrier_000_Ken_Schrader_Racing_ARCA_hauler_2017_Road_America_100_jp.jpg,,,,,,,
-car_carrier_42_Chevrolet_Cabover_37_Ford_9127542066_jpg.jpg,,,,,,,
-car_carrier_Car_carrier_loading_Maybach_in_Tokyo_3_jpg.jpg,,,,,,,
-car_carrier_200km_de_Buenos_Aires_2025_Domingo_48_jpg.jpg,,,,,,,
-car_carrier_2006_07_15_W_rth_0386_8584788011_2_jpg.jpg,,,,,,,
-car_carrier_DAF_CF_prime_mover_Bangladesh_27125078095_jpg.jpg,,,,,,,
-car_carrier_US_Route_522_2011_10_14_12_44_Virginia_6327418222_jpg.jpg,,,,,,,
-car_carrier_StateLibQld_1_183407_Car_of_a_Brisbane_tourist_being_taken_o.jpg,,,,,,,
-car_carrier_Austin_A200FT_Truck_1962_jpg.jpg,,,,,,,
-car_carrier_Kenworth_K108_Leonora_2018_01_jpg.jpg,,,,,,,
-car_carrier_Autotransport_panoramio_jpg.jpg,,,,,,,
-car_carrier_New_Zealand_Trucks_Flickr_111_Emergency_32_jpg.jpg,,,,,,,
-car_carrier_3_American_Classics_on_Transporter_in_Los_Angeles_1636641958.jpg,,,,,,,
+car_carrier_2010_11_29_Essen_145426_5221211648_jpg.jpg,side,tilted,,no,yes,no,[by Amir]
+car_carrier_Mercedes_Benz_E_63_AMG_2014_14386327465_jpg.jpg,three_quarter,ok,,no,no,no,[by Amir]
+car_carrier_200km_de_Buenos_Aires_2025_Domingo_47_jpg.jpg,three_quarter,ok,,yes,unclear,yes,[by Amir]
+car_carrier_Trailer_with_cars_in_Dnipro_jpg.jpg,side,ok,,no,yes,no,[by Amir]
+car_carrier_Ram_3500_DS_Towing_BMW_X5_F15_JPG.jpg,three_quarter,ok,,no,no,no,[by Amir]
+car_carrier_SinoTruk_HOWO_Iran_jpg.jpg,three_quarter,unclear,,no,no,no,[by Amir]
+car_carrier_DSC09858_Flickr_jns001_jpg.jpg,side,unclear,,no,yes,no,[by Amir]
+car_carrier_2023_F_350_SD_XL_Columbia_Co_Rest_Area_2_jpg.jpg,three_quarter,unclear,,unclear,unclear,unclear,[by Amir]
+car_carrier_000_Ken_Schrader_Racing_ARCA_hauler_2017_Road_America_100_jp.jpg,side,ok,,no,no,no,[by Amir]
+car_carrier_42_Chevrolet_Cabover_37_Ford_9127542066_jpg.jpg,three_quarter,ok,,no,no,no,[by Amir]
+car_carrier_Car_carrier_loading_Maybach_in_Tokyo_3_jpg.jpg,three_quarter,ok,,no,no,no,[by Amir]
+car_carrier_200km_de_Buenos_Aires_2025_Domingo_48_jpg.jpg,three_quarter,ok,,no,no,no,[by Amir]
+car_carrier_2006_07_15_W_rth_0386_8584788011_2_jpg.jpg,three_quarter,unclear,,no,no,yes,[by Amir]
+car_carrier_DAF_CF_prime_mover_Bangladesh_27125078095_jpg.jpg,three_quarter,ok,,no,no,no,[by Amir]
+car_carrier_US_Route_522_2011_10_14_12_44_Virginia_6327418222_jpg.jpg,rear,tilted,,no,no,no,[by Amir]
+car_carrier_StateLibQld_1_183407_Car_of_a_Brisbane_tourist_being_taken_o.jpg,side,ok,,no,no,no,old photo [by Amir]
+car_carrier_Austin_A200FT_Truck_1962_jpg.jpg,three_quarter,ok,,no,no,no,[by Amir]
+car_carrier_Kenworth_K108_Leonora_2018_01_jpg.jpg,three_quarter,ok,,no,no,no,[by Amir]
+car_carrier_Autotransport_panoramio_jpg.jpg,side,unclear,,unclear,yes,no,[by Amir]
+car_carrier_New_Zealand_Trucks_Flickr_111_Emergency_32_jpg.jpg,front,ok,,no,no,no,[by Amir]
+car_carrier_3_American_Classics_on_Transporter_in_Los_Angeles_1636641958.jpg,three_quarter,unclear,,unclear,unclear,unclear,[by Amir]
 car_carrier_Fuso_Canter_with_Kyokuto_carrier_truck_png.jpg,,,,,,,
 car_carrier_DAF_CF_Car_Carrier_9178155646_jpg.jpg,,,,,,,
 car_carrier_Mercedes_Benz_Actros_1851_Sch_pfer_1_jpg.jpg,,,,,,,
@@ -48,13 +48,13 @@ flatbed_Lord_Mayor_s_Show_London_2006_295247014_jpg.jpg,,,,,,,
 flatbed_Humanitarian_Aid_at_the_Zikim_Crossing_9417298_jpg.jpg,,,,,,,
 flatbed_Blue_Grass_Chemical_Agent_Destruction_Pilot_Plant_Static_Det.jpg,,,,,,,
 flatbed_S_gel_H_mmlinger_Ring_Schwertransport_Unfall_27_ies_jpg.jpg,,,,,,,
-flatbed_1935_International_truck_Gwalia_Museum_2018_02_jpg.jpg,,,,,,,
-semi_FAW_Trucks_PGP_Pratama_Galuh_Perkasa_FAW_DB290TH_jpg.jpg,,,,,,,
-semi_Chereau_semi_remorque_Plancoet_byRundvald_Oki_Wiki_jpg.jpg,,,,,,,
-semi_Esil_District_Astana_P1190657_jpg.jpg,,,,,,,
-semi_2006_07_15_W_rth_0326_8584759187_2_jpg.jpg,,,,,,,
-semi_Citroen_Gauloises_Ente_3_jpg.jpg,,,,,,,
-semi_Kepa_Transport_operating_in_the_James_Bay_area_jpg.jpg,,,,,,,
+flatbed_1935_International_truck_Gwalia_Museum_2018_02_jpg.jpg,three_quarter,unclear,,unclear,unclear,unclear,not a truck;  [by Jahongir]
+semi_FAW_Trucks_PGP_Pratama_Galuh_Perkasa_FAW_DB290TH_jpg.jpg,three_quarter,ok,,no,no,yes,[by Jahongir]
+semi_Chereau_semi_remorque_Plancoet_byRundvald_Oki_Wiki_jpg.jpg,three_quarter,ok,,no,no,no,[by Jahongir]
+semi_Esil_District_Astana_P1190657_jpg.jpg,three_quarter,ok,,no,no,no,no cargo [by Jahongir]
+semi_2006_07_15_W_rth_0326_8584759187_2_jpg.jpg,side,ok,,no,no,yes,[by Jahongir]
+semi_Citroen_Gauloises_Ente_3_jpg.jpg,,unclear,,unclear,unclear,unclear,not a truck;  [by Jahongir]
+semi_Kepa_Transport_operating_in_the_James_Bay_area_jpg.jpg,side,ok,,unclear,no,no,[by Jahongir]
 semi_Low_floor_Trailer_001_JPG.jpg,,,,,,,
 semi_Budapest_XI_a_20_sz_AK_V_telephelye_a_Than_K_roly_utca_Andor.jpg,,,,,,,
 semi_Berlin_Mitte_Deutsches_Currywurst_Museum_jpg.jpg,,,,,,,
@@ -98,24 +98,24 @@ night_JGSDF_truck_being_unloaded_from_a_RAAF_C_17_JPG.jpg,,,,,,,
 night_Anime_billboards_in_Akihabara_2012_09_18_jpg.jpg,,,,,,,
 night_Daf_night_illumination_Dnipro_jpg.jpg,,,,,,,
 night_LEGO_Truck_Burning_Man_2011_Night_jpg.jpg,,,,,,,
-night_Equipment_Truck_38350132131_jpg.jpg,,,,,,,
-night_Hino_AKB48_ad_truck_in_Akihabara_20130102_night_jpg.jpg,,,,,,,
-night_FAP_1921BK_JKP_Beograd_put_2_jpg.jpg,,,,,,,
-night_Man_illuminated_truck_in_Dnipro_jpg.jpg,,,,,,,
-night_HK_MK_Mongkok_Nathan_Road_KMBus_stop_n_red_truck_Kam_Ming_ni.jpg,,,,,,,
-night_HK_CWB_Causeway_Bay_Yee_Wo_Street_logistics_truck_night_Apri.jpg,,,,,,,
-night_FAP_2026BS_AV_JKP_GSP_Beograd_7605_jpg.jpg,,,,,,,
-night_MAN_TGS_33_440_JKP_Beograd_put_1_jpg.jpg,,,,,,,
-night_Foton_Ollin_V_001_jpg.jpg,,,,,,,
-night_HK_Central_Des_Voeux_Road_night_Lorry_Hong_Kong_Red_Cross_Tr.jpg,,,,,,,
-night_HK_MK_Mongkok_Nathan_Road_Kam_Ming_truck_red_KMBus_stops_nig.jpg,,,,,,,
-night_110317_F_YC711_118_JGSDF_loaded_pumps_provided_by_USN_onto_t.jpg,,,,,,,
-night_Man_truck_illuminated_in_Dnipro_jpg.jpg,,,,,,,
-night_Countdown_Point_Chevalier_Unloading_jpg.jpg,,,,,,,
-night_Inner_city_night_delivery_in_Prague_JPG.jpg,,,,,,,
-night_Diskothek_A5_09072016_2_png.jpg,,,,,,,
-night_Egyptian_Mercedes_Benz_3838_Truck_R01_jpg.jpg,,,,,,,
-night_Lawsons_Haulage_Mountain_Transformer_jpg.jpg,,,,,,,
-night_Caltex_Truck_Stop_Penong_2017_01_jpg.jpg,,,,,,,
-night_Big_Truck_Colorado_State_Hwy_Just_North_Of_O_229898611_jpeg.jpg,,,,,,,
-night_Mazda_TITAN_I_at_night_front_JPG.jpg,,,,,,,
+night_Equipment_Truck_38350132131_jpg.jpg,three_quarter,ok,,no,no,no,night [by Muzaffarali]
+night_Hino_AKB48_ad_truck_in_Akihabara_20130102_night_jpg.jpg,three_quarter,ok,,no,no,no,night [by Muzaffarali]
+night_FAP_1921BK_JKP_Beograd_put_2_jpg.jpg,,unclear,,unclear,unclear,unclear,not a truck;  [by Muzaffarali]
+night_Man_illuminated_truck_in_Dnipro_jpg.jpg,front,ok,,no,no,no,night [by Muzaffarali]
+night_HK_MK_Mongkok_Nathan_Road_KMBus_stop_n_red_truck_Kam_Ming_ni.jpg,,unclear,,unclear,unclear,unclear,not a truck;  [by Muzaffarali]
+night_HK_CWB_Causeway_Bay_Yee_Wo_Street_logistics_truck_night_Apri.jpg,three_quarter,ok,,no,no,no,[by Muzaffarali]
+night_FAP_2026BS_AV_JKP_GSP_Beograd_7605_jpg.jpg,three_quarter,ok,,no,no,no,night [by Muzaffarali]
+night_MAN_TGS_33_440_JKP_Beograd_put_1_jpg.jpg,three_quarter,ok,,no,no,no,night [by Muzaffarali]
+night_Foton_Ollin_V_001_jpg.jpg,three_quarter,unclear,,no,unclear,no,night [by Muzaffarali]
+night_HK_Central_Des_Voeux_Road_night_Lorry_Hong_Kong_Red_Cross_Tr.jpg,three_quarter,ok,,no,no,no,night [by Muzaffarali]
+night_HK_MK_Mongkok_Nathan_Road_Kam_Ming_truck_red_KMBus_stops_nig.jpg,,unclear,,unclear,unclear,unclear,not a truck;  [by Muzaffarali]
+night_110317_F_YC711_118_JGSDF_loaded_pumps_provided_by_USN_onto_t.jpg,,unclear,,unclear,unclear,unclear,not a truck;  [by Muzaffarali]
+night_Man_truck_illuminated_in_Dnipro_jpg.jpg,front,ok,,no,unclear,no,night [by Muzaffarali]
+night_Countdown_Point_Chevalier_Unloading_jpg.jpg,three_quarter,ok,,no,unclear,no,night [by Muzaffarali]
+night_Inner_city_night_delivery_in_Prague_JPG.jpg,,unclear,,unclear,unclear,unclear,not a truck;  [by Muzaffarali]
+night_Diskothek_A5_09072016_2_png.jpg,three_quarter,unclear,,unclear,unclear,no,night [by Muzaffarali]
+night_Egyptian_Mercedes_Benz_3838_Truck_R01_jpg.jpg,three_quarter,ok,,no,unclear,no,night [by Muzaffarali]
+night_Lawsons_Haulage_Mountain_Transformer_jpg.jpg,side,unclear,,no,unclear,no,"night, rain [by Muzaffarali]"
+night_Caltex_Truck_Stop_Penong_2017_01_jpg.jpg,three_quarter,ok,,no,unclear,no,"night, three trucks [by Muzaffarali]"
+night_Big_Truck_Colorado_State_Hwy_Just_North_Of_O_229898611_jpeg.jpg,three_quarter,unclear,,unclear,unclear,no,night [by ]
+night_Mazda_TITAN_I_at_night_front_JPG.jpg,side,ok,,no,unclear,no,night [by ]

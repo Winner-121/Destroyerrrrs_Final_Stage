@@ -100,6 +100,9 @@ def measure(det: Detections, img_shape, img: np.ndarray | None = None) -> Measur
     wheels = [b for b in det.by_label("wheel") if tb.xyxy[0] - 10 <= b.cx <= tb.xyxy[2] + 10]
     if len(wheels) < 2 and det.truck_mask is not None and img is not None:
         found = find_wheels(img, det.truck_mask, tb)
+        # drop circles that belong to cars carried on the deck (their wheels are smaller and higher)
+        cars = det.by_label("car")
+        found = [w for w in found if not any(c.xyxy[0] <= w.cx <= c.xyxy[2] and c.xyxy[1] <= (w.xyxy[1] + w.xyxy[3]) / 2 <= c.xyxy[3] and c.h < 0.8 * tb.h for c in cars)]
         if len(found) >= 2:
             wheels = found
             det.boxes.extend(found)          # so they are drawn and reported
@@ -169,18 +172,25 @@ def measure(det: Detections, img_shape, img: np.ndarray | None = None) -> Measur
     cargo = [b for b in det.by_label("cargo", "container", "tarpaulin", "car") if _on_truck(b)]
     if cargo and det.truck_mask is not None:
         big = max(cargo, key=lambda b: b.w * b.h)
-        y = int(np.clip((big.xyxy[1] + big.xyxy[3]) / 2, 0, H - 1))
+        # cargo extent = union of all cargo boxes on the truck (several cars on a carrier)
+        c_l = min(b.xyxy[0] for b in cargo); c_r = max(b.xyxy[2] for b in cargo)
+        # body extent is read at deck height (wheel-centre row): cargo sits above the deck, so the
+        # mask row there is chassis + deck only, even when the mask also covers the cargo.
+        if wheels:
+            y = int(np.clip(np.median([(w.xyxy[1] + w.xyxy[3]) / 2 for w in wheels]), 0, H - 1))
+        else:
+            y = int(np.clip(tb.xyxy[3] - 0.25 * tb.h, 0, H - 1))
         xs = np.flatnonzero(det.truck_mask[y])
         if len(xs) > 10:
             body_l, body_r = int(xs.min()), int(xs.max())
-            over_l = body_l - big.xyxy[0]
-            over_r = big.xyxy[2] - body_r
+            over_l = body_l - c_l
+            over_r = c_r - body_r
             over_px = max(over_l, over_r, 0)
             if M.scale_m_per_px:
                 if over_px == over_l and over_l > 0:
-                    M.overhang_px = (body_l, big.xyxy[0], y)
+                    M.overhang_px = (body_l, c_l, y)
                 elif over_r > 0:
-                    M.overhang_px = (body_r, big.xyxy[2], y)
+                    M.overhang_px = (body_r, c_r, y)
                 M.overhang_cm = round(over_px * M.scale_m_per_px * 100, 1)
                 M.overhang_kind = "rear" if M.view == "side" else "side"
                 M.overhang_conf = round(big.conf * (0.9 if M.view != "unknown" else 0.5), 2)

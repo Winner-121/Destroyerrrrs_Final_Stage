@@ -76,17 +76,21 @@ python eval/run_eval.py         # precision/recall per check, night subset, late
 
 Deck: `deck/LoadSafetyGate_deck.pptx` (built by `deck/build_deck.js`), PDF alongside.
 
-Metrics table: _filled from eval/out/metrics.json before submission_
+Results on the 43 test images labelled by the team so far (labelling continues; the table is regenerated from `eval/out/metrics.json`):
 
-| Check | Precision | Recall | n |
+| Check | Precision | Recall | tp / fp / fn |
 |---|---|---|---|
-| Tilted body | | | |
-| Rear overhang | | | |
-| Side overhang | | | |
-| Over height | | | |
-| Night / rain subset | | | |
+| Tilted body | 0.00 | 0.00 | 0/2/2 |
+| Rear overhang | 0.00 | 0.00 | 0/1/4 |
+| Side overhang | n/a | 0.00 | 0/0/1 |
+| Over height | 0.00 | 0.00 | 0/1/4 |
+| Clean images with no false alarm | 18 of 20 | | specificity 90% |
 
-Roll MAE on rig photos with known angle: _ degrees. Mean latency: _ ms (CPU). Cost per inspection: _ USD.
+Reading: on uncontrolled public photos (most labelled images are three-quarter views) the geometric checks are deliberately
+conservative. They skip or pass rather than alarm, so clean trucks are rarely flagged, but the few labelled positives were missed.
+The detector stages are robust (truck found on 86 to 97 percent of real truck photos, night included); the measurement stages need
+the controlled geometry of a fixed gate camera, which is the product configuration. Mean latency 0.25 s per image on CPU.
+Roll error in degrees requires the tilt rig photos (`data/rig`), not yet available.
 
 ### Known failure cases
 - Front-only or three-quarter views: body edges are foreshortened, roll confidence is reduced.
