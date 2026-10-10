@@ -27,7 +27,7 @@ class Decision:
 
 def decide(M: Measurements) -> Decision:
     D = Decision(verdict="CANNOT ASSESS", notes=list(M.notes))
-    if M.roll_deg is None and M.overhang_cm is None and M.height_m is None:
+    if M.roll_deg is None and M.overhang_cm is None and M.height_m is None and M.load_lean_deg is None:
         return D
 
     # roll
@@ -82,6 +82,21 @@ def decide(M: Measurements) -> Decision:
         else:
             st, why = "pass", f"limit {lim} m"
         D.checks.append(Check("Height", st, f"{M.height_m:.2f} m", M.height_conf, why))
+
+    # load lean (stacked load above the body). Thresholds are ours, there is no regulation for stack lean.
+    if M.load_lean_deg is not None:
+        if M.load_conf < T.get("load_min_conf", 0.5):
+            D.checks.append(Check("Load lean", "skip", f"({abs(M.load_lean_deg):.1f}°)", M.load_conf, "low confidence: stack edges not clear"))
+        else:
+            a = abs(M.load_lean_deg); side = "left" if M.load_lean_deg > 0 else "right"
+            wide = M.load_spread_deg is not None and M.load_spread_deg >= T.get("load_spread_warn_deg", 8.0)
+            if a >= T.get("load_lean_fail_deg", 10.0):
+                D.checks.append(Check("Load lean", "fail", f"{a:.1f}° {side}", M.load_conf, f"stack leans ≥ {T.get('load_lean_fail_deg', 10.0)}°, may fall"))
+            elif a >= T.get("load_lean_warn_deg", 5.0) or wide:
+                why = "stack wider at the top than at the body" if wide and a < T.get("load_lean_warn_deg", 5.0) else f"stack leans ≥ {T.get('load_lean_warn_deg', 5.0)}°"
+                D.checks.append(Check("Load lean", "warn", f"{a:.1f}° {side}", M.load_conf, why))
+            else:
+                D.checks.append(Check("Load lean", "pass", f"{a:.1f}°", M.load_conf, "stack upright"))
 
     statuses = {c.status for c in D.checks}
     if "fail" in statuses:

@@ -46,6 +46,10 @@ class Measurements:
     height_m: float | None = None
     height_conf: float = 0.0
     height_px: tuple | None = None        # (x, y_top, y_ground)
+    load_lean_deg: float | None = None    # stacked load above the body: mean lean of its two side edges, + = left
+    load_spread_deg: float | None = None  # left edge angle minus right edge angle: + = wider at the top
+    load_conf: float = 0.0
+    load_lines: list = field(default_factory=list)
     notes: list[str] = field(default_factory=list)
 
 
@@ -233,6 +237,27 @@ def measure(det: Detections, img_shape, img: np.ndarray | None = None) -> Measur
             M.notes.append("overhang: no cargo detected")
     else:
         M.notes.append("overhang: no cargo detected")
+
+    # ---- load lean: only for a stacked load above the vehicle box in a rear view ----
+    if M.view == "rear" and veh is not tb and det.truck_mask is not None:
+        y0, y1_ = int(tb.xyxy[1]), int(veh.xyxy[1] - 0.05 * tb.h)
+        if y1_ - y0 > 0.15 * tb.h:
+            L, R = [], []
+            for y in range(y0, y1_):
+                xs = np.flatnonzero(det.truck_mask[y])
+                if len(xs) > 10:
+                    L.append((y, xs.min())); R.append((y, xs.max()))
+            fl = _fit_line_ransac(np.array(L, dtype=float), tol=4.0) if len(L) >= 10 else None
+            fr = _fit_line_ransac(np.array(R, dtype=float), tol=4.0) if len(R) >= 10 else None
+            if fl and fr:
+                # x = m*y + c ; m > 0 means x grows downward, i.e. the top is further LEFT
+                al, ar_ = np.degrees(np.arctan(fl[0])), np.degrees(np.arctan(fr[0]))
+                M.load_lean_deg = round(float((al + ar_) / 2), 1)
+                M.load_spread_deg = round(float(al - ar_), 1)
+                M.load_conf = round(float(min(fl[2], fr[2])) * min(1.0, (y1_ - y0) / (0.3 * tb.h)), 2)
+                for m_, c_ in ((fl[0], fl[1]), (fr[0], fr[1])):
+                    M.load_lines.append((int(m_ * y0 + c_), y0, int(m_ * y1_ + c_), y1_))
+                M.notes.append("load lean from the two side edges of the stack")
 
     # ---- height ----
     ground_y = None

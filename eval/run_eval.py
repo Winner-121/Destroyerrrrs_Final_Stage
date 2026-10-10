@@ -35,7 +35,7 @@ def pr(tp, fp, fn):
 def main():
     labels = load_labels()
     per = []
-    counts = {k: [0, 0, 0] for k in ["tilted", "side_overhang", "rear_overhang", "over_height"]}
+    counts = {k: [0, 0, 0] for k in ["tilted", "side_overhang", "rear_overhang", "over_height", "load_leaning"]}
     counts_night = {k: [0, 0, 0] for k in counts}
     roll_err, lat = [], []
     clean_n = clean_ok = 0
@@ -53,18 +53,20 @@ def main():
                 "side_overhang": ch.get("Side overhang", {}).get("status") == "fail",
                 "rear_overhang": ch.get("Rear overhang", {}).get("status") in ("warn", "fail"),
                 "over_height": ch.get("Height", {}).get("status") == "fail",
+                "load_leaning": ch.get("Load lean", {}).get("status") in ("warn", "fail"),
             }
             truth = {
                 "tilted": lab["roll_label"] == "tilted",
                 "side_overhang": lab["side_overhang"] == "yes",
                 "rear_overhang": lab["rear_overhang"] == "yes",
                 "over_height": lab["over_height"] == "yes",
+                "load_leaning": lab.get("load_position") == "leaning",
             }
             tgt = counts_night if d.name == "night_rain" else counts
             for k in counts:
-                if lab.get({"tilted": "roll_label", "side_overhang": "side_overhang",
-                            "rear_overhang": "rear_overhang", "over_height": "over_height"}[k]) == "unclear":
-                    continue
+                if lab.get({"tilted": "roll_label", "side_overhang": "side_overhang", "rear_overhang": "rear_overhang",
+                            "over_height": "over_height", "load_leaning": "load_position"}[k], "") in ("unclear", ""):
+                    continue          # unclear, or not labelled for this question
                 if pred[k] and truth[k]: tgt[k][0] += 1
                 elif pred[k] and not truth[k]: tgt[k][1] += 1
                 elif not pred[k] and truth[k]: tgt[k][2] += 1

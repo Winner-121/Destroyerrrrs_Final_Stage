@@ -45,6 +45,8 @@ def annotate(img: np.ndarray, det: Detections, M: Measurements, D: Decision) -> 
     if M.overhang_px:
         xb, xc, y = M.overhang_px
         cv2.line(out, (int(xb), int(y)), (int(xc), int(y)), (0, 0, 255), 4)
+    for (a, b, c, d) in M.load_lines:
+        cv2.line(out, (a, b), (c, d), (255, 255, 0), 3)
     if M.height_px:
         x, yt, yg = M.height_px
         cv2.line(out, (x, yt), (x, yg), (255, 0, 255), 3)

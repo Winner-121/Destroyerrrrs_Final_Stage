@@ -26,4 +26,8 @@ thresholds:                           # Uzbekistan: Cabinet of Ministers Decree 
   height_min_conf: 0.6
   height_implausible_m: 8.0        # above this the scale is wrong, not the truck: report as cannot assess
   overhang_min_conf: 0.5
+  load_lean_warn_deg: 5.0             # stacked load above the body (rear view). Our own thresholds: no regulation
+  load_lean_fail_deg: 10.0            # covers stack lean, so they are stated as ours on the deck
+  load_spread_warn_deg: 8.0           # stack wider at the top than at the body
+  load_min_conf: 0.5
   min_truck_box_frac: 0.15            # truck must occupy >= this fraction of image width
