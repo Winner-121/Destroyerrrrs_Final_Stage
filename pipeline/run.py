@@ -34,6 +34,10 @@ def annotate(img: np.ndarray, det: Detections, M: Measurements, D: Decision) -> 
         c = (255, 120, 0) if b.label == "wheel" else (0, 200, 255)
         cv2.rectangle(out, b.xyxy[:2], b.xyxy[2:], c, 2)
         cv2.putText(out, f"{b.label} {b.conf:.2f}", (b.xyxy[0], max(12, b.xyxy[1] - 4)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, c, 1)
+    for (a, b, c, d) in M.struct_lines:
+        cv2.line(out, (a, b), (c, d), (0, 255, 0), 2)
+    for (a, b, c, d) in M.ref_lines:
+        cv2.line(out, (a, b), (c, d), (255, 255, 0), 2)
     if M.top_line:
         cv2.line(out, M.top_line.as_int()[:2], M.top_line.as_int()[2:], (0, 255, 0), 3)
     if M.bottom_line:
@@ -63,7 +67,7 @@ def analyse(img_bgr: np.ndarray, max_side: int = 1280) -> dict:
         img_bgr = cv2.resize(img_bgr, (int(w * s), int(h * s)), interpolation=cv2.INTER_AREA)
     det = get_detector()(img_bgr)
     safe = pixelate(img_bgr, det.privacy_boxes)      # from here on only the blurred image exists
-    M = measure(det, safe.shape)
+    M = measure(det, safe.shape, img_bgr)
     D = decide(M)
     vis = annotate(safe, det, M, D)
     total = (time.perf_counter() - t0) * 1000
@@ -73,6 +77,7 @@ def analyse(img_bgr: np.ndarray, max_side: int = 1280) -> dict:
         "notes": D.notes,
         "view": M.view,
         "scale_source": M.scale_source,
+        "roll_reference": M.roll_reference,
         "privacy_regions_blurred": len(det.privacy_boxes),
         "detections": [{"label": b.label, "conf": round(b.conf, 3), "xyxy": b.xyxy} for b in det.boxes],
         "timings_ms": {**{k: round(v, 1) for k, v in det.timings_ms.items()}, "total": round(total, 1)},

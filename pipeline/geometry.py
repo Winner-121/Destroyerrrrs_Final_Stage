@@ -13,6 +13,7 @@ import cv2
 import numpy as np
 
 from .detect import CFG, Box, Detections
+from .wheels import find_wheels, ground_points, body_vertical, scene_vertical
 
 
 @dataclass
@@ -33,6 +34,9 @@ class Measurements:
     roll_deg: float | None = None
     roll_conf: float = 0.0
     top_line: Line | None = None
+    struct_lines: list = field(default_factory=list)
+    ref_lines: list = field(default_factory=list)
+    roll_reference: str = "none"
     bottom_line: Line | None = None
     overhang_cm: float | None = None      # rear overhang in side view, side overhang in rear view
     overhang_kind: str = "none"
@@ -79,7 +83,7 @@ def _edge_points(mask: np.ndarray, top: bool, x_lo: int, x_hi: int):
     return np.array(pts, dtype=float)
 
 
-def measure(det: Detections, img_shape) -> Measurements:
+def measure(det: Detections, img_shape, img: np.ndarray | None = None) -> Measurements:
     M = Measurements()
     H, W = img_shape[:2]
     tb = det.truck_box
@@ -94,6 +98,12 @@ def measure(det: Detections, img_shape) -> Measurements:
     M.view = "side" if ar > 1.6 else ("rear" if ar < 1.25 else "unknown")
 
     wheels = [b for b in det.by_label("wheel") if tb.xyxy[0] - 10 <= b.cx <= tb.xyxy[2] + 10]
+    if len(wheels) < 2 and det.truck_mask is not None and img is not None:
+        found = find_wheels(img, det.truck_mask, tb)
+        if len(found) >= 2:
+            wheels = found
+            det.boxes.extend(found)          # so they are drawn and reported
+            M.notes.append(f"wheels from circle finder ({len(found)})")
     # ---- scale ----
     if M.view == "rear" and det.truck_mask is not None:
         ys = tb.xyxy[1] + int(tb.h * 0.5)
@@ -107,34 +117,56 @@ def measure(det: Detections, img_shape) -> Measurements:
             M.scale_m_per_px = CFG["scale"]["wheel_diameter_m"] / wh
             M.scale_source = "wheel diameter 1.05 m"
 
-    # ---- roll ----
+    # ---- ground line (for scale / height drawing) ----
     x_lo = tb.xyxy[0] + int(tb.w * 0.15)
     x_hi = tb.xyxy[2] - int(tb.w * 0.15)
     if det.truck_mask is not None and x_hi - x_lo > 20:
-        top = _fit_line_ransac(_edge_points(det.truck_mask, True, x_lo, x_hi))
-        bot = None
         if len(wheels) >= 2:
             pts = np.array([(w.cx, w.bottom) for w in wheels], dtype=float)
             m, c = np.polyfit(pts[:, 0], pts[:, 1], 1)
-            bot = (float(m), float(c), 1.0)
-            bot_src = "wheel contact line"
+            M.bottom_line = Line(x_lo, m * x_lo + c, x_hi, m * x_hi + c)
         else:
-            bot = _fit_line_ransac(_edge_points(det.truck_mask, False, x_lo, x_hi))
-            bot_src = "body bottom edge"
-        if top and bot:
-            M.top_line = Line(x_lo, top[0] * x_lo + top[1], x_hi, top[0] * x_hi + top[1])
-            M.bottom_line = Line(x_lo, bot[0] * x_lo + bot[1], x_hi, bot[0] * x_hi + bot[1])
-            M.roll_deg = M.top_line.angle_deg - M.bottom_line.angle_deg
-            M.roll_conf = round(min(top[2], bot[2]) * (1.0 if M.view == "side" else 0.6), 2)
-            M.notes.append(f"roll from body top edge vs {bot_src}")
+            gp = ground_points(det.truck_mask, x_lo, x_hi, tb.h)
+            if gp is not None and (gp[:, 0].max() - gp[:, 0].min()) > 0.35 * tb.w:
+                m, c = np.polyfit(gp[:, 0], gp[:, 1], 1)
+                M.bottom_line = Line(x_lo, m * x_lo + c, x_hi, m * x_hi + c)
+
+    # ---- roll: body vertical edges vs a gravity reference in the same image ----
+    # Horizontal edges converge under perspective, so a level truck looks tilted when top and bottom
+    # edges are compared. Vertical edges on the left and right halves converge in opposite directions,
+    # so their mean cancels perspective. The reference is scene verticals (poles, walls) when present,
+    # otherwise the camera vertical with reduced confidence.
+    if det.truck_mask is not None and img is not None:
+        bv = body_vertical(img, det.truck_mask, tb)
+        if bv is None or bv[1] < 0.15:
+            M.notes.append("roll: no vertical body edges found")
         else:
-            M.notes.append("roll: could not fit body edges")
+            sv = scene_vertical(img, det.truck_mask)
+            M.struct_lines = bv[2]
+            if sv is not None and sv[1] >= 0.3:
+                M.roll_deg = bv[0] - sv[0]
+                M.roll_conf = round(min(bv[1], sv[1]) * (1.0 if M.view == "side" else 0.7), 2)
+                M.ref_lines = sv[2]
+                M.roll_reference = "scene verticals"
+            else:
+                M.roll_deg = bv[0]
+                M.roll_conf = round(bv[1] * 0.7 * (1.0 if M.view == "side" else 0.7), 2)
+                M.roll_reference = "camera vertical"
+            M.notes.append(f"roll from body vertical edges vs {M.roll_reference}")
     else:
         M.notes.append("roll: no truck mask")
 
     # ---- overhang ----
-    cargo = [b for b in det.by_label("cargo", "container", "tarpaulin", "car")
-             if b.cx > tb.xyxy[0] - tb.w * 0.3 and b.cx < tb.xyxy[2] + tb.w * 0.3]
+    def _on_truck(b):
+        inside_x = tb.xyxy[0] - 0.05 * tb.w <= b.cx <= tb.xyxy[2] + 0.05 * tb.w
+        bottom_ok = b.bottom <= tb.xyxy[3] + 0.05 * tb.h          # not a car parked in front
+        above_ground = M.bottom_line is None or b.bottom <= (M.bottom_line.y1 + M.bottom_line.y2) / 2 + 0.05 * tb.h
+        not_whole_truck = b.w < 0.9 * tb.w or b.h < 0.9 * tb.h
+        ix = max(0, min(b.xyxy[2], tb.xyxy[2]) - max(b.xyxy[0], tb.xyxy[0]))
+        iy = max(0, min(b.xyxy[3], tb.xyxy[3]) - max(b.xyxy[1], tb.xyxy[1]))
+        overlap = ix * iy / max(1, b.w * b.h)                      # share of the cargo box inside the truck box
+        return inside_x and bottom_ok and above_ground and not_whole_truck and overlap >= 0.5
+    cargo = [b for b in det.by_label("cargo", "container", "tarpaulin", "car") if _on_truck(b)]
     if cargo and det.truck_mask is not None:
         big = max(cargo, key=lambda b: b.w * b.h)
         y = int(np.clip((big.xyxy[1] + big.xyxy[3]) / 2, 0, H - 1))
