@@ -25,7 +25,7 @@ const card = (s, x, y, w, h, title, body, accent) => {
   s.addShape(pres.ShapeType.rect, { x, y, w, h, fill: { color: THEME.colors.lt2 }, line: { color: THEME.colors.lt2, width: 0 } });
   s.addShape(pres.ShapeType.ellipse, { x: x + 0.2, y: y + 0.2, w: 0.42, h: 0.42, fill: { color: accent || THEME.colors.accent1 }, line: { color: accent || THEME.colors.accent1, width: 0 } });
   TB(s, title, { x: x + 0.75, y: y + 0.15, w: w - 0.95, h: 0.5, bold: true, fontSize: 16, valign: "middle" });
-  TB(s, body, { x: x + 0.2, y: y + 0.75, w: w - 0.4, h: h - 0.9, fontSize: 13, color: C.text2, valign: "top" });
+  TB(s, body, { x: x + 0.2, y: y + 0.68, w: w - 0.4, h: h - 0.78, fontSize: 12, color: C.text2, valign: "top" });
 };
 const bullets = (items) => items.map((t, i) => ({ text: t, options: { bullet: true, breakLine: i < items.length - 1, paraSpaceAfter: 6 } }));
 const img = (p) => fs.existsSync(p) ? p : null;
@@ -43,10 +43,10 @@ TB(s, "Body roll  ·  Overhang  ·  Height  ·  Plates and people blurred before
 pres.addSection({ title: "Problem" });
 s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Problem" });
 s.addText("A badly loaded truck is checked by eye, or not at all", { placeholder: "title" });
-card(s, 0.5, 1.3, 6.0, 1.25, "Who uses it", "The gate operator or dispatcher at a freight terminal, a fleet depot, or a dealer receiving yard. One photo, one answer, before the truck leaves.", THEME.colors.accent2);
-card(s, 0.5, 2.67, 6.0, 1.25, "What goes wrong today", "Shifted or one-sided loads roll over. Overhanging cargo hits bridges, signs and other vehicles. Oversized loads draw fines and stop the truck at the first police post.", THEME.colors.accent4);
-card(s, 0.5, 4.04, 6.0, 1.35, "Who pays", "The fleet owner or terminal, per gate. Partner angle: every Toyota and BYD arrives on a car carrier into a Royal Motors yard. Car carriers are the classic over-height and rear-overhang offenders.", THEME.colors.accent3);
-card(s, 0.5, 5.51, 6.0, 1.25, "Regulation already exists", "Uzbekistan Decree 342, Annex 2: height 4.0 m, width 2.55 m, rear protrusion 2 m. Nobody measures it at the gate.", THEME.colors.accent1);
+card(s, 0.5, 1.3, 6.0, 1.3, "Who uses it", "Gate operator or dispatcher at a terminal, fleet depot or dealer receiving yard. One photo, one answer, before the truck leaves.", THEME.colors.accent2);
+card(s, 0.5, 2.72, 6.0, 1.3, "What goes wrong today", "One-sided loads roll over. Overhanging cargo hits bridges and other vehicles. Oversized loads draw fines and stop the truck at the first police post.", THEME.colors.accent4);
+card(s, 0.5, 4.14, 6.0, 1.3, "Who pays", "Fleet owner or terminal, per gate. Every Toyota and BYD arrives on a car carrier into a Royal Motors yard, and car carriers are the classic over-height and rear-overhang offenders.", THEME.colors.accent3);
+card(s, 0.5, 5.56, 6.0, 1.3, "Regulation already exists", "Uzbekistan Decree 342, Annex 2: height 4.0 m, width 2.55 m, rear protrusion 2 m. Nobody measures it at the gate.", THEME.colors.accent1);
 const ex1 = img("../eval/out/raw/car_carrier/car_carrier_1967_79_Saviem_SG2_fl_jpg.jpg");
 if (ex1) s.addImage({ path: ex1, x: 6.9, y: 1.4, w: 5.9, h: 4.4, sizing: { type: "contain", w: 5.9, h: 4.4 } });
 TB(s, "Live output of the deployed pipeline on a licensed test image (Wikimedia Commons, CC BY-SA 4.0).", { x: 6.9, y: 5.9, w: 5.9, h: 0.6, fontSize: 11, color: C.text2 });

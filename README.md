@@ -67,8 +67,14 @@ engineering choices, not regulation, and are stated as such.
 ## Evaluation
 
 ```bash
-python eval/run_eval.py      # reads data/labels.csv, writes eval/out/metrics.json
+python tools/fetch_commons.py   # download licensed Commons photos, append data/SOURCES.csv
+python tools/hit_rate.py        # detector hit rate per subset on data/raw -> eval/out/hit_rate.json
+# team labelling: open <deployed url>/label/<slug> ; labels persist in a Modal Dict
+python tools/pull_labels.py     # pull team labels into data/labels.csv
+python eval/run_eval.py         # precision/recall per check, night subset, latency -> eval/out/metrics.json
 ```
+
+Deck: `deck/LoadSafetyGate_deck.pptx` (built by `deck/build_deck.js`), PDF alongside.
 
 Metrics table: _filled from eval/out/metrics.json before submission_
 
