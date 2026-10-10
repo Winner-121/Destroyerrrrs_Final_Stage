@@ -1,0 +1,4 @@
+filename,view,roll_label,roll_deg_true,side_overhang,rear_overhang,over_height,notes
+# view: side | rear | three_quarter | other
+# roll_label: ok | tilted ; roll_deg_true: number only for rig photos, else blank
+# side_overhang / rear_overhang / over_height: yes | no | unclear

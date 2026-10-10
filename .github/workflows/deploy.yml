@@ -1,0 +1,21 @@
+name: Deploy to Hugging Face Space
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+      - name: Push to HF Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE: ${{ secrets.HF_SPACE }}   # e.g. username/load-safety-gate
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git push --force https://user:$HF_TOKEN@huggingface.co/spaces/$HF_SPACE HEAD:main

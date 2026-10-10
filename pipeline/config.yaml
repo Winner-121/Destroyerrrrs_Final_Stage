@@ -1,0 +1,23 @@
+# Load Safety Gate — pipeline configuration
+detector:
+  model: yolov8s-worldv2.pt          # open-vocabulary detector, no training needed
+  prompts: [truck, trailer, cargo, wheel, container, tarpaulin]
+  conf: 0.15
+  imgsz: 640
+  device: cpu                         # production target; override with env LSG_DEVICE=cuda
+privacy:
+  model: yolov8n.pt                   # fallback: person boxes; plate model set in code
+  blur_persons: true
+  blur_plates: true
+scale:
+  trailer_width_m: 2.55               # legal max body width (EU / CIS standard)
+  wheel_diameter_m: 1.05              # typical truck tyre outer diameter
+thresholds:                           # human must confirm local road-code values
+  roll_min_conf: 0.45                 # below this the roll check is skipped, not reported
+  roll_warn_deg: 3.0
+  roll_fail_deg: 6.0
+  side_overhang_fail_cm: 20           # cargo wider than body by this -> NO-GO
+  rear_overhang_warn_cm: 100          # must be marked beyond this
+  rear_overhang_fail_cm: 200          # legal max rear overhang
+  max_height_m: 4.0                   # legal max vehicle height
+  min_truck_box_frac: 0.15            # truck must occupy >= this fraction of image width
