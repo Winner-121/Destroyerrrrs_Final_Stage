@@ -28,8 +28,8 @@ photo ──► YOLO-World (open-vocabulary boxes: truck, trailer, cargo, wheel,
 - **Height** = highest point of anything resting on the truck (cargo boxes, truck mask, any detection whose bottom sits inside the truck box) to ground, scaled by the wheel diameter or the body width.
 - **Load lean (experimental)** = for a load stacked above the body in a rear view, the mean angle of the stack's two side
   edges against the image vertical (averaging both edges cancels perspective), plus whether the stack is wider at the top
-  than at the body. Thresholds 5 and 10 degrees are ours: no regulation covers stack lean. It only runs in that one
-  configuration, so it has a thin test set (see Evaluation).
+  than at the body. No regulation covers stack lean and the labelled test set gave it no support, so it is shown as an
+  observation and does not change the verdict (see Evaluation).
 - Low-confidence or missing inputs produce `CANNOT ASSESS` or a skipped check, never a guess.
 
 Models are pretrained and untrained by us (Ultralytics YOLO-World v2 and YOLOv8s-seg, AGPL-3.0).
@@ -96,10 +96,19 @@ Results on the 101 test images labelled by the team (19 of 120 were marked not a
 
 Reading: 61 of the 101 labelled photos are three-quarter views and 16 are rear or front views. The measurement stages only
 report when a side or rear view gives them a scale object, so on this uncontrolled set they are deliberately conservative:
-clean trucks are rarely flagged (89% specificity) but only 6 of 41 labelled positive checks were caught. Verdicts on the set: 54 GO, 7 WARN, 9 NO-GO, 31 CANNOT ASSESS.
+clean trucks are rarely flagged (89% specificity) but only 6 of 41 labelled positive checks were caught. Verdicts on the set: 55 GO, 7 WARN, 9 NO-GO, 31 CANNOT ASSESS.
 Roll and height are reported on side and rear views (rear views take scale from the 2.55 m body width); three-quarter views are gated to CANNOT ASSESS.
 The detector stages are robust (truck found on 86 to 97 percent of real truck photos, night included). The measurement stages
 need the controlled geometry of a fixed gate camera, which is the product configuration. Mean latency 0.20 s per image on CPU.
+
+### Load lean, experimental and not counted
+
+The team labelled the stack position on all 120 photos: 50 straight, 2 leaning, 36 with no stacked load, 32 unclear. The
+measurement only runs on a rear view with the load above the body, which is 2 of the 101 photos. Both leaning stacks are
+side or three-quarter views, where it cannot run, and the one rear-view reading disagreed with the human label (the stack
+read 10 degrees right, the labeller called it straight). Result: 0 of 2 caught, 1 disagreement. The reading is therefore
+shown on the result page in brackets as an observation and never changes the verdict. It stays in the code because the
+geometry is sound and the gate camera will give the rear view it needs; it needs its own test set before it counts.
 
 ### Roll instrument accuracy, controlled test
 

@@ -53,7 +53,7 @@ def main():
                 "side_overhang": ch.get("Side overhang", {}).get("status") == "fail",
                 "rear_overhang": ch.get("Rear overhang", {}).get("status") in ("warn", "fail"),
                 "over_height": ch.get("Height", {}).get("status") == "fail",
-                "load_leaning": ch.get("Load lean", {}).get("status") in ("warn", "fail"),
+                "load_leaning": ch.get("Load lean", {}).get("status") in ("warn", "fail"),   # informational check never fires
             }
             truth = {
                 "tilted": lab["roll_label"] == "tilted",

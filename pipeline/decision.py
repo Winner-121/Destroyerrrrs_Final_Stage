@@ -83,20 +83,14 @@ def decide(M: Measurements) -> Decision:
             st, why = "pass", f"limit {lim} m"
         D.checks.append(Check("Height", st, f"{M.height_m:.2f} m", M.height_conf, why))
 
-    # load lean (stacked load above the body). Thresholds are ours, there is no regulation for stack lean.
+    # load lean (stacked load above the body). Experimental: shown, never counted in the verdict.
+    # On the labelled set the two leaning stacks were side / three-quarter views where this cannot run, and the one
+    # rear-view reading disagreed with the human label, so it stays informational until a proper test set exists.
     if M.load_lean_deg is not None:
-        if M.load_conf < T.get("load_min_conf", 0.5):
-            D.checks.append(Check("Load lean", "skip", f"({abs(M.load_lean_deg):.1f}°)", M.load_conf, "low confidence: stack edges not clear"))
-        else:
-            a = abs(M.load_lean_deg); side = "left" if M.load_lean_deg > 0 else "right"
-            wide = M.load_spread_deg is not None and M.load_spread_deg >= T.get("load_spread_warn_deg", 8.0)
-            if a >= T.get("load_lean_fail_deg", 10.0):
-                D.checks.append(Check("Load lean", "fail", f"{a:.1f}° {side}", M.load_conf, f"stack leans ≥ {T.get('load_lean_fail_deg', 10.0)}°, may fall"))
-            elif a >= T.get("load_lean_warn_deg", 5.0) or wide:
-                why = "stack wider at the top than at the body" if wide and a < T.get("load_lean_warn_deg", 5.0) else f"stack leans ≥ {T.get('load_lean_warn_deg', 5.0)}°"
-                D.checks.append(Check("Load lean", "warn", f"{a:.1f}° {side}", M.load_conf, why))
-            else:
-                D.checks.append(Check("Load lean", "pass", f"{a:.1f}°", M.load_conf, "stack upright"))
+        a = abs(M.load_lean_deg); side = "left" if M.load_lean_deg > 0 else "right"
+        wide = M.load_spread_deg is not None and M.load_spread_deg >= T.get("load_spread_warn_deg", 8.0)
+        obs = f"stack leans {a:.1f}° {side}" + (", wider at the top than at the body" if wide else "")
+        D.checks.append(Check("Load lean (experimental)", "skip", f"({a:.1f}°)", M.load_conf, obs + "; not counted, no validated threshold"))
 
     statuses = {c.status for c in D.checks}
     if "fail" in statuses:
