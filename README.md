@@ -83,15 +83,16 @@ Results on the 101 test images labelled by the team (19 of 120 were marked not a
 
 | Check | Precision | Recall | tp / fp / fn |
 |---|---|---|---|
-| Tilted body | 0.33 | 0.09 | 1/2/10 |
+| Tilted body | 0.40 | 0.18 | 2/3/9 |
 | Rear overhang | 0.00 | 0.00 | 0/1/7 |
 | Side overhang | n/a | 0.00 | 0/0/6 |
 | Over height | 0.33 | 0.06 | 1/2/16 |
-| Clean trucks with no false alarm | 41 of 44 | | specificity 93% |
+| Clean trucks with no false alarm | 40 of 44 | | specificity 91% |
 
 Reading: 61 of the 101 labelled photos are three-quarter views and 16 are rear or front views. The measurement stages only
 report when a side or rear view gives them a scale object, so on this uncontrolled set they are deliberately conservative:
-clean trucks are rarely flagged (93% specificity) but only 2 of 41 labelled positives were caught.
+clean trucks are rarely flagged (91% specificity) but only 3 of 41 labelled positive checks were caught. Verdicts on the set: 52 GO, 9 WARN, 5 NO-GO, 35 CANNOT ASSESS.
+Roll and height are reported on side and rear views (rear views take scale from the 2.55 m body width); three-quarter views are gated to CANNOT ASSESS.
 The detector stages are robust (truck found on 86 to 97 percent of real truck photos, night included). The measurement stages
 need the controlled geometry of a fixed gate camera, which is the product configuration. Mean latency 0.20 s per image on CPU.
 

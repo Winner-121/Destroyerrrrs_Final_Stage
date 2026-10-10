@@ -69,8 +69,8 @@ def decide(M: Measurements) -> Decision:
     # height
     if M.height_m is None:
         D.checks.append(Check("Height", "skip", "n/a", 0, "no ground line or scale"))
-    elif M.height_conf < T["height_min_conf"] or M.view != "side":
-        D.checks.append(Check("Height", "skip", f"({M.height_m:.2f} m)", M.height_conf, "low confidence: needs a side view with two wheels found"))
+    elif M.height_conf < T["height_min_conf"] or M.view == "unknown":
+        D.checks.append(Check("Height", "skip", f"({M.height_m:.2f} m)", M.height_conf, "low confidence: needs a side or rear view with two wheels found"))
     else:
         lim = T["max_height_m"]; mar = T["height_margin_m"]
         if M.height_m > lim + mar:

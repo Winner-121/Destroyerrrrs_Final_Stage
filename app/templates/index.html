@@ -63,6 +63,7 @@
   <div class="card" id="result" style="display:none">
     <div id="verdict"></div>
     <p id="ticket"></p>
+    <p id="howto" class="meta" style="display:none; text-align:center; color:var(--fg)">To get a measurement: stand to the side or straight behind the truck, 10 to 15 m away, phone held level and in landscape, whole truck and wheels in the frame.</p>
     <table id="checks"></table>
     <img id="out" alt="annotated result">
     <div class="meta" id="meta"></div>
@@ -88,6 +89,7 @@ async function run(p){
     $('#out').src = 'data:image/jpeg;base64,' + r.image_b64;
     $('#meta').textContent = `view: ${r.view} · scale: ${r.scale_source} · ${r.timings_ms.total} ms on ${r.device} · ${r.privacy_regions_blurred} privacy region(s) blurred`;
     $('#notes').textContent = r.notes.length ? 'notes: ' + r.notes.join(' · ') : '';
+    $('#howto').style.display = r.verdict.startsWith('CANNOT') ? 'block' : 'none';
     $('#ticket').innerHTML = `Inspection ticket <b>${r.ticket}</b> · logged in the shift journal (numbers only, the photo is not stored)`;
     if (r.stats) showStats(r.stats);
     $('#result').style.display='block';

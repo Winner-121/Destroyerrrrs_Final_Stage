@@ -150,12 +150,12 @@ def measure(det: Detections, img_shape, img: np.ndarray | None = None) -> Measur
             M.body_vs_camera_deg = float(bv[0])
             if sv is not None and sv[1] >= 0.3:
                 M.roll_deg = bv[0] - sv[0]
-                M.roll_conf = round(min(bv[1], sv[1]) * (1.0 if M.view == "side" else 0.7), 2)
+                M.roll_conf = round(min(bv[1], sv[1]) * (1.0 if M.view != "unknown" else 0.7), 2)
                 M.ref_lines = sv[2]
                 M.roll_reference = "scene verticals"
             else:
                 M.roll_deg = bv[0]
-                M.roll_conf = round(bv[1] * 0.7 * (1.0 if M.view == "side" else 0.7), 2)
+                M.roll_conf = round(bv[1] * 0.7 * (1.0 if M.view != "unknown" else 0.7), 2)
                 M.roll_reference = "camera vertical"
             M.notes.append(f"roll from body vertical edges vs {M.roll_reference}")
     else:
