@@ -12,3 +12,4 @@ data/rig/*
 !data/labels.csv
 eval/out/
 .env
+data/labels_store.json

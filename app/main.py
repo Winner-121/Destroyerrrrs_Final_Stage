@@ -14,10 +14,12 @@ from fastapi.templating import Jinja2Templates
 from PIL import Image, ImageOps
 
 from pipeline.run import analyse, get_detector
+from app.label import router as label_router
 
 ROOT = Path(__file__).parent
 app = FastAPI(title="Load Safety Gate")
 app.mount("/static", StaticFiles(directory=ROOT / "static"), name="static")
+app.include_router(label_router)
 templates = Jinja2Templates(directory=ROOT / "templates")
 EXAMPLES = sorted((ROOT / "static" / "examples").glob("*.jpg")) if (ROOT / "static" / "examples").exists() else []
 

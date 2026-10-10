@@ -22,6 +22,9 @@ image = (
     .run_commands(f'python -c "{WEIGHTS_WARMUP}"')                 # download weights at build time
     .add_local_dir("pipeline", "/root/pipeline")
     .add_local_dir("app", "/root/app")
+    .add_local_dir("data/test", "/root/data/test")
+    .add_local_dir("data/night_rain", "/root/data/night_rain")
+    .add_local_file("data/labels.csv", "/root/data/labels.csv")
 )
 
 app = modal.App("load-safety-gate", image=image)

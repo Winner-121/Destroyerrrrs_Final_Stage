@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Load Safety Gate Labels</title>
+<style>
+:root{--bg:#f3f4f1;--panel:#fff;--ink:#1c2321;--mute:#5f6a66;--line:#d9ddd8;--accent:#1f5f8b;--accent-ink:#fff;--done:#2a8a4a;--warn:#c9781a;--chip:#e9ece7}
+@media (prefers-color-scheme:dark){:root{--bg:#15191b;--panel:#1f2528;--ink:#e6eae7;--mute:#9aa6a1;--line:#343c40;--accent:#5aa4d6;--accent-ink:#0f1a22;--done:#4fc27a;--warn:#e39a3d;--chip:#2a3236;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}h1{font-size:1.25rem;margin:0}.sub{color:var(--mute);margin:4px 0 12px;font-size:.92rem}
+.top{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline;justify-content:space-between}.count{font-variant-numeric:tabular-nums;font-family:ui-monospace,Menlo,monospace}
+.strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(26px,1fr));gap:3px;margin:10px 0 14px}
+.strip button{height:24px;border:1px solid var(--line);background:var(--chip);color:var(--mute);border-radius:4px;font:11px ui-monospace,Menlo,monospace;cursor:pointer;padding:0}
+.strip button.done{background:var(--done);border-color:var(--done);color:#fff}.strip button.cur{outline:2px solid var(--accent);outline-offset:1px}
+.main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:16px}@media (max-width:760px){.main{grid-template-columns:1fr}}
+.imgbox,.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px;min-width:0}.imgbox img{width:100%;height:auto;border-radius:4px;display:block;background:#000}
+.fname{font-family:ui-monospace,Menlo,monospace;font-size:.78rem;color:var(--mute);margin-top:8px;word-break:break-all}
+.panel{display:flex;flex-direction:column;gap:12px}.q{display:flex;flex-direction:column;gap:6px}.q label{font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;color:var(--mute)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}.seg button,.nav button{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:6px;padding:8px 12px;font-size:.92rem;cursor:pointer}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.nav button:disabled{opacity:.5}textarea,input{width:100%;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);padding:8px;font:inherit}
+.status{font-size:.85rem;color:var(--mute);min-height:1.2em}.status.err{color:var(--warn)}.hint{font-size:.85rem;color:var(--mute);border-top:1px solid var(--line);padding-top:10px}
+</style></head><body><div class="wrap">
+<div class="top"><div><h1>Load Safety Gate Labels</h1><p class="sub">Ground truth for the truck-load checker. One image at a time, saved to the team store when you press Save.</p></div><div class="count" id="count">0 / 0 labelled</div></div>
+<div class="strip" id="strip"></div>
+<div class="main">
+ <div class="imgbox"><img id="img" alt="truck photo to label"><div class="fname" id="fname"></div></div>
+ <div class="panel">
+  <div class="q"><label>Your name or initials</label><input id="by" placeholder="so we know who labelled what"></div>
+  <div class="q"><label>View of the truck</label><div class="seg" data-k="view"><button data-v="side">side</button><button data-v="rear">rear</button><button data-v="three_quarter">three-quarter</button><button data-v="front">front</button><button data-v="other">other</button></div></div>
+  <div class="q"><label>Body roll (leaning sideways relative to the road)</label><div class="seg" data-k="roll_label"><button data-v="ok">level</button><button data-v="tilted">tilted</button><button data-v="unclear">unclear</button></div></div>
+  <div class="q"><label>Side overhang (cargo wider than the body)</label><div class="seg" data-k="side_overhang"><button data-v="no">no</button><button data-v="yes">yes</button><button data-v="unclear">unclear</button></div></div>
+  <div class="q"><label>Rear overhang (cargo past the back of the trailer)</label><div class="seg" data-k="rear_overhang"><button data-v="no">no</button><button data-v="yes">yes</button><button data-v="unclear">unclear</button></div></div>
+  <div class="q"><label>Over height (would not clear a 4 m bridge)</label><div class="seg" data-k="over_height"><button data-v="no">no</button><button data-v="yes">yes</button><button data-v="unclear">unclear</button></div></div>
+  <div class="q"><label>Is this a loaded truck at all?</label><div class="seg" data-k="valid"><button data-v="yes">yes</button><button data-v="no">no, skip it</button></div></div>
+  <div class="q"><label for="notes">Notes</label><textarea id="notes" rows="2" placeholder="night, rain, partial truck, two trucks, anything odd"></textarea></div>
+  <div class="nav"><button id="prev">Previous</button><button id="save" class="primary">Save and next</button><button id="next">Skip</button></div>
+  <div class="status" id="status"></div>
+  <div class="hint"><b>Split the work:</b> agree on ranges, e.g. 1 to 60 and 61 to 120. Green frames are done, by anyone. Saving again overwrites. <b>Unclear</b> beats guessing.</div>
+ </div>
+</div></div>
+<script>
+const ITEMS=__ITEMS__, SLUG="__SLUG__", BASE="/label/"+SLUG;
+const KEYS=["view","roll_label","side_overhang","rear_overhang","over_height","valid"];
+const $=s=>document.querySelector(s); let cur=0, labels={}, saving=false;
+try{cur=Math.min(ITEMS.length-1,Math.max(0,parseInt(localStorage.getItem("lsg_cur")||"0",10)||0)); $("#by").value=localStorage.getItem("lsg_by")||"";}catch(e){}
+const strip=$("#strip"); ITEMS.forEach((it,i)=>{const b=document.createElement("button");b.textContent=i+1;b.title=it.f;b.onclick=()=>show(i);strip.appendChild(b);});
+function show(i){cur=i;try{localStorage.setItem("lsg_cur",String(i));}catch(e){}
+ const it=ITEMS[i]; $("#img").src=BASE+"/img/"+encodeURIComponent(it.f); $("#fname").textContent=(i+1)+" / "+ITEMS.length+"  ·  "+it.g+"  ·  "+it.f;
+ const L=labels[it.f]||{}; document.querySelectorAll(".seg").forEach(seg=>{const k=seg.dataset.k;seg.querySelectorAll("button").forEach(b=>b.classList.toggle("on",(L[k]??(k==="valid"?"yes":null))===b.dataset.v));});
+ $("#notes").value=L.notes||""; $("#status").textContent=L.ts?"Saved before by "+(L.by||"someone")+", "+L.ts:""; $("#status").className="status";
+ strip.querySelectorAll("button").forEach((b,j)=>b.classList.toggle("cur",j===i)); $("#prev").disabled=i===0; $("#next").disabled=i===ITEMS.length-1; window.scrollTo({top:0,behavior:"smooth"});}
+document.querySelectorAll(".seg").forEach(seg=>seg.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;seg.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));}));
+function current(){const o={};document.querySelectorAll(".seg").forEach(seg=>{const on=seg.querySelector("button.on");o[seg.dataset.k]=on?on.dataset.v:"";});o.notes=$("#notes").value.trim();o.by=$("#by").value.trim();return o;}
+function refresh(){let n=0;strip.querySelectorAll("button").forEach((b,j)=>{const d=!!labels[ITEMS[j].f];b.classList.toggle("done",d);if(d)n++;});$("#count").textContent=n+" / "+ITEMS.length+" labelled";}
+async function load(){try{const r=await (await fetch(BASE+"/state")).json();labels=r.labels||{};refresh();if(!saving)show(cur);}catch(e){}}
+$("#prev").onclick=()=>show(cur-1); $("#next").onclick=()=>show(cur+1);
+$("#save").onclick=async()=>{if(saving)return;const o=current(),it=ITEMS[cur];try{localStorage.setItem("lsg_by",o.by);}catch(e){}
+ const missing=o.valid==="no"?[]:KEYS.filter(k=>!o[k]); if(missing.length){$("#status").textContent="Answer every question first ("+missing.join(", ")+"), or mark it as not a truck.";$("#status").className="status err";return;}
+ saving=true;$("#save").disabled=true;$("#status").textContent="Saving…";$("#status").className="status";
+ try{const r=await fetch(BASE+"/save",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({filename:it.f,...o})}); if(!r.ok)throw new Error(await r.text());
+  labels[it.f]={...o,filename:it.f,ts:"just now"};refresh();$("#status").textContent="Saved.";if(cur<ITEMS.length-1)show(cur+1);}
+ catch(e){$("#status").textContent="Save failed: "+e.message;$("#status").className="status err";}
+ saving=false;$("#save").disabled=false;};
+show(cur);load();setInterval(load,20000);
+</script></body></html>
