@@ -129,7 +129,7 @@ const rows4 = [[hdr("Avoided loss, one fleet"), hdr("Amount"), hdr("Assumption, 
   ["Cost of one load incident", "$5,000", "cargo loss + downtime + fine + claim handling; wide range"], ["Avoided loss per year", "$60,000", "12 incidents x $5,000"]];
 s.addTable(rows4, { x: 7.0, y: 1.4, w: 5.8, colW: [2.6, 1.1, 2.1], fontSize: 12, color: C.text1, border: { type: "solid", color: THEME.colors.lt2, pt: 1 }, rowH: 0.4 });
 card(s, 0.5, 4.6, 6.3, 2.2, "Unit economics", "Price per gate per month, software only. Compute per inspection is below $0.001, so margin is in the subscription, not the inference. One server serves dozens of gates.", THEME.colors.accent2);
-card(s, 7.0, 4.6, 5.8, 2.2, "Payback", "Payback months = pilot cost / avoided loss per month. At one caught incident a month the avoided loss is $5,000 per month against $90 per month of hosting, so the one-off pilot cost is recovered within its first months. The fleet's own incident rate replaces the assumption after month one.", THEME.colors.accent3);
+card(s, 7.0, 4.6, 5.8, 2.2, "Payback", "Pilot cost $8,570 (team $7,200 + cameras $600 + hosting $270 + labelling $500). Avoided loss $5,000 per month at one caught incident a month. Payback = 8,570 / 5,000 = 1.7 months, inside the pilot itself. The fleet's own incident rate replaces the assumption after month one.", THEME.colors.accent3);
 
 // 10 Next steps
 s = pres.addSlide({ masterName: "DARK", sectionTitle: "Business" });
