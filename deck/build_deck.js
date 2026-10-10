@@ -104,7 +104,7 @@ s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Technology" });
 s.addText("Where it breaks, and what it does instead of guessing", { placeholder: "title" });
 const fails = [["../eval/out/raw/overloaded/" + (fs.existsSync("../eval/out/raw/overloaded") ? fs.readdirSync("../eval/out/raw/overloaded")[0] : ""), "Not a truck, or a tiny truck in the frame. Result: CANNOT ASSESS. The overloaded-vehicles category on Commons is mostly carts and motorbikes."],
   ["../eval/out/raw/car_carrier/car_carrier_080625_A_3715G_225_2668149320_jpg.jpg", "Front or three-quarter views foreshorten the body. Roll confidence drops below the floor and the check is skipped."],
-  ["../eval/out/raw/night/" + (fs.existsSync("../eval/out/raw/night") ? fs.readdirSync("../eval/out/raw/night")[1] : ""), "Night street with no truck in frame: CANNOT ASSESS. Dark trucks at night give a noisy mask edge and lower roll confidence; cargo the same colour as the body can merge into the mask."]];
+  ["../eval/out/raw/night/" + (fs.existsSync("../eval/out/raw/night") ? fs.readdirSync("../eval/out/raw/night")[1] : ""), "Night street with no truck in frame: CANNOT ASSESS. Wheels hidden in shadow or behind tanks give a wrong scale; a height that comes out above 8 m is shown as unreliable, never reported as a measurement."]];
 fails.forEach((f, i) => { const x = 0.5 + i * 4.15; if (img(f[0])) s.addImage({ path: f[0], x, y: 1.4, w: 3.95, h: 2.9, sizing: { type: "contain", w: 3.95, h: 2.9 } }); TB(s, f[1], { x, y: 4.4, w: 3.95, h: 1.4, fontSize: 12, color: C.text2, valign: "top" }); });
 card(s, 0.5, 5.9, 12.3, 0.95, "Design rule", "Every check reports a confidence and is skipped below a floor. A skipped check is shown as such, never as a pass.", THEME.colors.accent6);
 
