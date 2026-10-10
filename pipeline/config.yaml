@@ -12,7 +12,9 @@ privacy:
 scale:
   trailer_width_m: 2.55               # legal max body width (EU / CIS standard)
   wheel_diameter_m: 1.05              # typical truck tyre outer diameter
-thresholds:                           # human must confirm local road-code values
+thresholds:                           # Uzbekistan: Cabinet of Ministers Decree No. 342 (26.12.2011), Annex 2:
+                                      # oversized if height > 4.0 m, width > 2.55 m (2.6 m refrigerated),
+                                      # or cargo protrudes > 2 m beyond the rear of the body. Source: gov.uz/ru/uzavtoyul/sections/view/48313
   roll_min_conf: 0.45                 # below this the roll check is skipped, not reported
   roll_warn_deg: 3.0
   roll_fail_deg: 6.0

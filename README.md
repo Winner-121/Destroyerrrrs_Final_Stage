@@ -46,6 +46,24 @@ Hugging Face Spaces was the first choice but compute Spaces require a paid plan 
 
 Public URL: https://amir-kuldashev--load-safety-gate-web.modal.run
 
+## Decision thresholds (local regulation)
+
+Uzbekistan, Cabinet of Ministers Decree No. 342 of 26 Dec 2011, Annex 2 (via [Uzavtoyul](https://gov.uz/ru/uzavtoyul/sections/view/48313)):
+a vehicle, loaded or empty, is oversized when height exceeds **4.0 m**, width exceeds **2.55 m** (2.6 m for refrigerated bodies),
+or cargo protrudes more than **2 m** beyond the rear of the body. Beyond these limits a special permit and escort rules apply.
+The decision layer uses exactly these values (`pipeline/config.yaml`); roll thresholds (3 degrees warn, 6 degrees fail) are
+engineering choices, not regulation, and are stated as such.
+
+## Cost model
+
+| Item | Value | Basis |
+|---|---|---|
+| Inference time | ~0.19 s per image, CPU | measured on Modal, 2 cores |
+| Compute per inspection | < $0.001 | 0.19 s x ($0.094 core-hour + $0.032 memory-hour) / 3600 |
+| One always-warm server | ~$90 / month | Modal, 2 cores + 4 GiB, 24/7; serves many gates |
+| Camera per gate | $100 to $300 | fixed IP camera and mount, one-off |
+| Hardware alternative | ~$150 one-off | the same model runs on a small edge box (CPU), no cloud |
+
 ## Evaluation
 
 ```bash
