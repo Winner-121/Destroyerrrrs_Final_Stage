@@ -57,7 +57,7 @@ s = pres.addSlide({ masterName: "DARK", sectionTitle: "Demo" });
 TB(s, "Live demo", { x: 0.7, y: 0.5, w: 12, h: 0.8, fontSize: 36, bold: true, color: C.background1, fontFace: THEME.headFontFace });
 TB(s, "amir-kuldashev--load-safety-gate-web.modal.run", { x: 0.7, y: 1.4, w: 12, h: 0.7, fontSize: 26, color: THEME.colors.accent1, fontFace: "Courier New" });
 TB(s, "Open it on your phone. Take a photo of any truck, or give us one. No login, no app.", { x: 0.7, y: 2.2, w: 12, h: 0.5, fontSize: 18, color: C.background1 });
-TB(s, bullets(["Plates and people are pixelated first. The original is never stored.", "Green lines: body vertical edges and the ground line the roll is measured against.", "Red line: cargo beyond the body edge, in centimetres. Magenta: cargo top to ground, in metres.", "Verdict banner, per-check confidence, and the measured latency on CPU.", "When the photo does not allow a measurement the check says so. No guess, ever."]), { x: 0.7, y: 3.0, w: 7.3, h: 3.6, fontSize: 15, color: C.background1, isTextBox: true, margin: 0, valign: "top" });
+TB(s, bullets(["Plates and people are pixelated first. The original is never stored.", "Green lines: body vertical edges and the ground line the roll is measured against.", "Red line: cargo beyond the body edge, in centimetres. Magenta: cargo top to ground, in metres.", "Verdict banner, per-check confidence, and the measured latency on CPU.", "Every run gets an inspection ticket and lands in the shift journal: counts of GO, WARN, NO-GO for the day. Numbers only, the photo is discarded.", "When the photo does not allow a measurement the check says so. No guess, ever."]), { x: 0.7, y: 3.0, w: 7.3, h: 3.6, fontSize: 15, color: C.background1, isTextBox: true, margin: 0, valign: "top" });
 const ex2 = img("../eval/out/dbg_9.jpg");
 if (ex2) s.addImage({ path: ex2, x: 8.3, y: 3.0, w: 4.6, h: 3.6, sizing: { type: "contain", w: 4.6, h: 3.6 } });
 
@@ -96,8 +96,8 @@ TB(s, "Detector hit rate on 301 licensed Commons photos (no labels needed). Nigh
 const rows2 = [[hdr("Check"), hdr("Precision"), hdr("Recall"), hdr("tp/fp/fn")], ["Tilted body", "0.33", "0.09", "1/2/10"], ["Rear overhang", "0.00", "0.00", "0/1/7"], ["Side overhang", "n/a", "0.00", "0/0/6"], ["Over height", "0.33", "0.06", "1/2/16"], ["Clean trucks, no false alarm", "41 of 44", "", "93% specificity"]];
 s.addTable(rows2, { x: 7.0, y: 1.4, w: 5.8, colW: [2.2, 1.2, 1.2, 1.2], fontSize: 12, color: C.text1, border: { type: "solid", color: THEME.colors.lt2, pt: 1 }, rowH: 0.36 });
 TB(s, "Against 101 team-labelled images, 61 of them three-quarter views. Honest result: the phone mode is conservative. 93% of clean trucks pass without a false alarm, but it caught only 2 of 41 labelled positives, mostly three-quarter and rear views where no scale object is visible. The calibrated gate camera is the fix, not a bigger model.", { x: 7.0, y: 4.0, w: 5.8, h: 0.7, fontSize: 10, color: C.text2 });
-const stat = (x, big, small) => { TB(s, big, { x, y: 4.7, w: 3.9, h: 0.9, fontSize: 40, bold: true, color: THEME.colors.accent2, fontFace: THEME.headFontFace }); TB(s, small, { x, y: 5.6, w: 3.9, h: 0.8, fontSize: 12, color: C.text2 }); };
-stat(0.5, "0.19 s", "per image on 2 CPU cores, measured on the deployed server"); stat(4.7, "< $0.001", "compute per inspection; one warm server about $90 per month"); stat(8.9, "0 faces", "stored. Plates and people pixelated before anything is kept");
+const stat = (x, big, small) => { TB(s, big, { x, y: 4.7, w: 2.9, h: 0.9, fontSize: 36, bold: true, color: THEME.colors.accent2, fontFace: THEME.headFontFace }); TB(s, small, { x, y: 5.6, w: 2.9, h: 1.0, fontSize: 11, color: C.text2 }); };
+stat(0.5, "1.63°", "roll instrument error, 56 rotated level photos at known angles, sign right 93% of the time"); stat(3.6, "0.19 s", "per image on 2 CPU cores, measured on the deployed server"); stat(6.7, "< $0.001", "compute per inspection; one warm server about $90 per month"); stat(9.8, "0 faces", "stored. Plates and people pixelated before anything is kept");
 
 // 7 Failure cases
 s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Technology" });
@@ -124,11 +124,12 @@ const rows3 = [[hdr("Pilot cost, 3 months"), hdr("Amount"), hdr("Assumption")],
   ["Team: 2 engineers + 1 ops, part time", "[confirm]", "local salaries, 3 months"], ["Cameras and mounts, 3 gates", "$600", "$200 per gate, one-off"], ["Hosting", "$270", "one warm CPU server, $90 per month"],
   ["Labelling and data", "$500", "about 40 hours of labelling"], ["Legal and privacy review", "[confirm]", "blur at ingest, no personal data stored"]];
 s.addTable(rows3, { x: 0.5, y: 1.4, w: 6.3, colW: [2.9, 1.2, 2.2], fontSize: 12, color: C.text1, border: { type: "solid", color: THEME.colors.lt2, pt: 1 }, rowH: 0.4 });
-const rows4 = [[hdr("Avoided loss per year, one fleet"), hdr("Amount"), hdr("Assumption")],
-  ["Rollovers prevented", "[confirm]", "cost of one rollover x events avoided"], ["Oversize fines avoided", "[confirm]", "fine x stops per month"], ["Cargo damage claims", "[confirm]", "claims per year x share caught at gate"], ["Operator time", "[confirm]", "minutes per manual walkaround x trucks per day"]];
+const rows4 = [[hdr("Avoided loss, one fleet"), hdr("Amount"), hdr("Assumption, calibrated in the pilot")],
+  ["Departures screened", "200 per day", "mid-size fleet, one gate camera"], ["Dangerous departures caught", "1 per month", "conservative: 1 in ~6,000 departures"],
+  ["Cost of one load incident", "$5,000", "cargo loss + downtime + fine + claim handling; wide range"], ["Avoided loss per year", "$60,000", "12 incidents x $5,000"]];
 s.addTable(rows4, { x: 7.0, y: 1.4, w: 5.8, colW: [2.6, 1.1, 2.1], fontSize: 12, color: C.text1, border: { type: "solid", color: THEME.colors.lt2, pt: 1 }, rowH: 0.4 });
 card(s, 0.5, 4.6, 6.3, 2.2, "Unit economics", "Price per gate per month, software only. Compute per inspection is below $0.001, so margin is in the subscription, not the inference. One server serves dozens of gates.", THEME.colors.accent2);
-card(s, 7.0, 4.6, 5.8, 2.2, "Payback", "Payback months = pilot cost / (avoided loss per month). Fill the [confirm] cells with the fleet's own figures and the formula gives the answer on the spot.", THEME.colors.accent3);
+card(s, 7.0, 4.6, 5.8, 2.2, "Payback", "Payback months = pilot cost / avoided loss per month. At one caught incident a month the avoided loss is $5,000 per month against $90 per month of hosting, so the one-off pilot cost is recovered within its first months. The fleet's own incident rate replaces the assumption after month one.", THEME.colors.accent3);
 
 // 10 Next steps
 s = pres.addSlide({ masterName: "DARK", sectionTitle: "Business" });

@@ -16,11 +16,13 @@ photo ──► YOLO-World (open-vocabulary boxes: truck, trailer, cargo, wheel,
           to objects in the same image, scaled by trailer
           width 2.55 m or wheel diameter 1.05 m
       ──► decision layer: road-code thresholds → verdict     (pipeline/decision.py, pipeline/config.yaml)
-      ──► annotated image + checklist                       (app/)
+      ──► annotated image + checklist + inspection ticket   (app/)
+      ──► shift journal: ticket, time, verdict, values      (app/journal.py, Modal Dict; no image stored)
 ```
 
-- **Body roll** = angle between the body top edge (RANSAC fit on the truck mask) and the wheel contact line.
-  Camera roll cancels because both lines are in the same image.
+- **Body roll** = angle of the body's vertical edges against scene verticals (poles, walls) in the same image, or against
+  the image vertical with reduced confidence when no scene vertical is found. Left and right body edges converge in opposite
+  directions under perspective, so their mean cancels it. Camera roll cancels when a scene vertical exists.
 - **Overhang** = cargo box extent beyond the body edge at cargo height. Rear overhang in a side view, side overhang in a rear view.
 - **Height** = cargo top to ground, scaled by the wheel diameter.
 - Low-confidence or missing inputs produce `CANNOT ASSESS` or a skipped check, never a guess.
@@ -72,6 +74,7 @@ python tools/hit_rate.py        # detector hit rate per subset on data/raw -> ev
 # team labelling: open <deployed url>/label/<slug> ; labels persist in a Modal Dict
 python tools/pull_labels.py     # pull team labels into data/labels.csv
 python eval/run_eval.py         # precision/recall per check, night subset, latency -> eval/out/metrics.json
+python eval/run_tilt_eval.py    # controlled roll accuracy on rotated level photos -> eval/out/tilt_eval.json
 ```
 
 Deck: `deck/LoadSafetyGate_deck.pptx` (built by `deck/build_deck.js`), PDF alongside.
@@ -91,13 +94,36 @@ report when a side or rear view gives them a scale object, so on this uncontroll
 clean trucks are rarely flagged (93% specificity) but only 2 of 41 labelled positives were caught.
 The detector stages are robust (truck found on 86 to 97 percent of real truck photos, night included). The measurement stages
 need the controlled geometry of a fixed gate camera, which is the product configuration. Mean latency 0.20 s per image on CPU.
-Roll error in degrees requires the tilt rig photos (`data/rig`), not available at submission.
+
+### Roll instrument accuracy, controlled test
+
+No tilt rig was available, so the protocol is declared synthetic: the 7 side-view photos the team labelled as level and on
+which the body edges are found are rotated by -12, -8, -5, -3, +3, +5, +8, +12 degrees about the image centre and cropped by
+15 percent so no border edge is introduced. The rotation is the ground truth. Regenerated from `eval/out/tilt_eval.json`:
+
+| Quantity | Value |
+|---|---|
+| Readings | 56 (7 photos x 8 angles) |
+| Mean absolute error of the body-angle reading | 1.63 deg |
+| Median absolute error | 0.74 deg |
+| Sign of the tilt correct | 93% |
+| Error at 3 to 8 degrees | 0.96 to 1.83 deg |
+| Error at 12 degrees | 2.0 and 3.41 deg |
+
+Rotating a photo tilts the camera, not the truck. When scene verticals were found (4 of 56 rotated images) the
+reported body roll moved by 2.94 degrees on average while the camera was tilted by up to 8 degrees, which is the
+camera-roll cancellation working, with a small sample. Without scene verticals the reading follows the camera, and the
+confidence is reduced accordingly.
 
 ### Known failure cases
 - Front-only or three-quarter views: body edges are foreshortened, roll confidence is reduced.
 - No wheels or body edge visible: no scale, overhang and height are skipped.
 - Dark trucks at night: mask boundary noisy, roll may be reported with low confidence.
 - Cargo that matches the body colour is sometimes merged into the truck mask, hiding overhang.
+- The open-vocabulary "cargo" prompt misses the load on 37 of 101 labelled photos, which is the main cause of
+  CANNOT ASSESS. A mask-based alternative was tested (cargo = mask extent above the wheel band, body = mask extent in
+  the wheel band): on side views the two labelled rear-overhang positives read 0 and 55 cm while clean trucks read 0 to
+  1,200 cm, so it was rejected rather than shipped. The fix is a calibrated gate camera, not a looser detector.
 
 ## Data sources and licences
 
@@ -108,7 +134,7 @@ No faces or plates are stored unblurred. No customer or personal data is used.
 |---|---|---|
 | Open Images V7 (truck class) | CC BY 4.0 annotations, CC BY 2.0 images | test set |
 | Pexels / Unsplash | Pexels License / Unsplash License | test set, night and rain |
-| Own photos (toy-truck rig at known tilt) | team, CC BY 4.0 | roll accuracy |
+| Rotated copies of team-labelled level Commons photos | same licence as the source image | roll accuracy, declared synthetic |
 | Ultralytics YOLO-World v2, YOLOv8s-seg weights | AGPL-3.0 | detection |
 
 ## Libraries
