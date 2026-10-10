@@ -109,6 +109,8 @@ def measure(det: Detections, img_shape, img: np.ndarray | None = None) -> Measur
             break
     ar = veh.w / max(veh.h, 1)
     M.view = "side" if ar > 1.6 else ("rear" if ar < 1.25 else "unknown")
+    if tb.w / max(tb.h, 1) < 0.9:
+        M.view = "rear"          # a whole rig taller than wide is never a side view; the load may hide the body shape
 
     wheels = [b for b in det.by_label("wheel") if tb.xyxy[0] - 10 <= b.cx <= tb.xyxy[2] + 10]
     if len(wheels) < 2 and det.truck_mask is not None and img is not None:
@@ -212,6 +214,23 @@ def measure(det: Detections, img_shape, img: np.ndarray | None = None) -> Measur
                 M.notes.append("overhang: no scale object (wheel/body) found")
         else:
             M.notes.append("overhang: body edge not found at cargo height")
+    elif M.view == "rear" and veh is not tb and det.truck_mask is not None and M.scale_m_per_px:
+        # load above the vehicle box: compare the mask width above the body with the body width at the chassis row
+        y = int(np.clip(veh.xyxy[1] + veh.h * 0.5, 0, H - 1))
+        xs = np.flatnonzero(det.truck_mask[y])
+        upper = det.truck_mask[max(0, tb.xyxy[1]): max(1, veh.xyxy[1] - int(0.05 * tb.h))]
+        ux = np.flatnonzero(upper.any(axis=0)) if upper.size else []
+        if len(xs) > 10 and len(ux) > 10:
+            body_l, body_r = int(xs.min()), int(xs.max()); c_l, c_r = int(ux.min()), int(ux.max())
+            over_l, over_r = body_l - c_l, c_r - body_r
+            over_px = max(over_l, over_r, 0)
+            M.overhang_px = (body_l, c_l, y) if over_l >= over_r else (body_r, c_r, y)
+            M.overhang_cm = round(over_px * M.scale_m_per_px * 100, 1)
+            M.overhang_kind = "side"
+            M.overhang_conf = 0.6
+            M.notes.append("overhang: load width from the mask above the body")
+        else:
+            M.notes.append("overhang: no cargo detected")
     else:
         M.notes.append("overhang: no cargo detected")
 
@@ -241,7 +260,7 @@ def measure(det: Detections, img_shape, img: np.ndarray | None = None) -> Measur
     top_y = min(tops) if cargo or det.truck_mask is not None else None
     if ground_y and top_y is not None and M.scale_m_per_px:
         M.height_m = round((ground_y - top_y) * M.scale_m_per_px, 2)
-        M.height_conf = round(0.8 if wheels else 0.4, 2)
+        M.height_conf = round(0.8 if wheels else (0.7 if M.scale_source.startswith("body width") else 0.4), 2)
         M.height_px = (int(tb.cx), int(top_y), int(ground_y))
     else:
         M.notes.append("height: missing ground line or scale")

@@ -24,6 +24,7 @@ photo ──► YOLO-World (open-vocabulary boxes: truck, trailer, cargo, wheel,
   the image vertical with reduced confidence when no scene vertical is found. Left and right body edges converge in opposite
   directions under perspective, so their mean cancels it. Camera roll cancels when a scene vertical exists.
 - **Overhang** = cargo box extent beyond the body edge at cargo height. Rear overhang in a side view, side overhang in a rear view.
+  In a rear view with the load stacked above the body, the load width comes from the truck mask above the vehicle box.
 - **Height** = highest point of anything resting on the truck (cargo boxes, truck mask, any detection whose bottom sits inside the truck box) to ground, scaled by the wheel diameter or the body width.
 - Low-confidence or missing inputs produce `CANNOT ASSESS` or a skipped check, never a guess.
 
@@ -91,7 +92,7 @@ Results on the 101 test images labelled by the team (19 of 120 were marked not a
 
 Reading: 61 of the 101 labelled photos are three-quarter views and 16 are rear or front views. The measurement stages only
 report when a side or rear view gives them a scale object, so on this uncontrolled set they are deliberately conservative:
-clean trucks are rarely flagged (89% specificity) but only 6 of 41 labelled positive checks were caught. Verdicts on the set: 52 GO, 7 WARN, 9 NO-GO, 33 CANNOT ASSESS.
+clean trucks are rarely flagged (89% specificity) but only 6 of 41 labelled positive checks were caught. Verdicts on the set: 54 GO, 7 WARN, 9 NO-GO, 31 CANNOT ASSESS.
 Roll and height are reported on side and rear views (rear views take scale from the 2.55 m body width); three-quarter views are gated to CANNOT ASSESS.
 The detector stages are robust (truck found on 86 to 97 percent of real truck photos, night included). The measurement stages
 need the controlled geometry of a fixed gate camera, which is the product configuration. Mean latency 0.20 s per image on CPU.
