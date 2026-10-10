@@ -133,7 +133,7 @@ def measure(det: Detections, img_shape) -> Measurements:
         M.notes.append("roll: no truck mask")
 
     # ---- overhang ----
-    cargo = [b for b in det.by_label("cargo", "container", "tarpaulin")
+    cargo = [b for b in det.by_label("cargo", "container", "tarpaulin", "car")
              if b.cx > tb.xyxy[0] - tb.w * 0.3 and b.cx < tb.xyxy[2] + tb.w * 0.3]
     if cargo and det.truck_mask is not None:
         big = max(cargo, key=lambda b: b.w * b.h)

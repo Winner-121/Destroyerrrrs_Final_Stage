@@ -1,7 +1,7 @@
 # Load Safety Gate — pipeline configuration
 detector:
   model: yolov8s-worldv2.pt          # open-vocabulary detector, no training needed
-  prompts: [truck, trailer, cargo, wheel, container, tarpaulin]
+  prompts: [truck, trailer, cargo, car, wheel, container, tarpaulin]
   conf: 0.15
   imgsz: 640
   device: cpu                         # production target; override with env LSG_DEVICE=cuda
