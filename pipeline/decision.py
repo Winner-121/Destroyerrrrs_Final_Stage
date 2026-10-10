@@ -69,6 +69,8 @@ def decide(M: Measurements) -> Decision:
     # height
     if M.height_m is None:
         D.checks.append(Check("Height", "skip", "n/a", 0, "no ground line or scale"))
+    elif M.height_m > T.get("height_implausible_m", 8.0):
+        D.checks.append(Check("Height", "skip", f"({M.height_m:.1f} m)", 0.1, "scale implausible: wheel size not reliable in this photo"))
     elif M.height_conf < T["height_min_conf"] or M.view == "unknown":
         D.checks.append(Check("Height", "skip", f"({M.height_m:.2f} m)", M.height_conf, "low confidence: needs a side or rear view with two wheels found"))
     else:

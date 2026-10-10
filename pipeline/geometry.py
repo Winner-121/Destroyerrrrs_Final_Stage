@@ -95,12 +95,24 @@ def measure(det: Detections, img_shape, img: np.ndarray | None = None) -> Measur
         M.notes.append("truck too small in frame")
         return M
 
-    ar = tb.w / max(tb.h, 1)
+    # The COCO truck mask often includes a tall load, which makes the box square and the view "rear".
+    # The open-vocabulary "truck" box is the vehicle itself: use it for the view, the wheel search and the
+    # body width; keep the full box/mask for the load top.
+    veh = tb
+    for b in sorted(det.by_label("truck"), key=lambda b: -b.conf):
+        ix = max(0, min(b.xyxy[2], tb.xyxy[2]) - max(b.xyxy[0], tb.xyxy[0]))
+        iy = max(0, min(b.xyxy[3], tb.xyxy[3]) - max(b.xyxy[1], tb.xyxy[1]))
+        inside = ix * iy / max(1, b.w * b.h)
+        if inside >= 0.8 and b.w >= 0.6 * tb.w and b.h < 0.9 * tb.h and b.h >= 0.25 * tb.h:
+            veh = b
+            M.notes.append("vehicle box from detector, load above it")
+            break
+    ar = veh.w / max(veh.h, 1)
     M.view = "side" if ar > 1.6 else ("rear" if ar < 1.25 else "unknown")
 
     wheels = [b for b in det.by_label("wheel") if tb.xyxy[0] - 10 <= b.cx <= tb.xyxy[2] + 10]
     if len(wheels) < 2 and det.truck_mask is not None and img is not None:
-        found = find_wheels(img, det.truck_mask, tb)
+        found = find_wheels(img, det.truck_mask, veh)
         # drop circles that belong to cars carried on the deck (their wheels are smaller and higher)
         cars = det.by_label("car")
         found = [w for w in found if not any(c.xyxy[0] <= w.cx <= c.xyxy[2] and c.xyxy[1] <= (w.xyxy[1] + w.xyxy[3]) / 2 <= c.xyxy[3] and c.h < 0.8 * tb.h for c in cars)]
@@ -110,7 +122,7 @@ def measure(det: Detections, img_shape, img: np.ndarray | None = None) -> Measur
             M.notes.append(f"wheels from circle finder ({len(found)})")
     # ---- scale ----
     if M.view == "rear" and det.truck_mask is not None:
-        ys = tb.xyxy[1] + int(tb.h * 0.5)
+        ys = veh.xyxy[1] + int(veh.h * 0.5)
         xs = np.flatnonzero(det.truck_mask[ys])
         if len(xs) > 10:
             M.scale_m_per_px = CFG["scale"]["trailer_width_m"] / float(xs.max() - xs.min())

@@ -24,5 +24,6 @@ thresholds:                           # Uzbekistan: Cabinet of Ministers Decree 
   max_height_m: 4.0                   # legal max vehicle height
   height_margin_m: 0.4                # uncalibrated phone photos: fail only above limit + margin
   height_min_conf: 0.6
+  height_implausible_m: 8.0        # above this the scale is wrong, not the truck: report as cannot assess
   overhang_min_conf: 0.5
   min_truck_box_frac: 0.15            # truck must occupy >= this fraction of image width

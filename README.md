@@ -86,12 +86,12 @@ Results on the 101 test images labelled by the team (19 of 120 were marked not a
 | Tilted body | 0.40 | 0.18 | 2/3/9 |
 | Rear overhang | 0.00 | 0.00 | 0/1/7 |
 | Side overhang | n/a | 0.00 | 0/0/6 |
-| Over height | 0.50 | 0.18 | 3/3/14 |
+| Over height | 0.57 | 0.24 | 4/3/13 |
 | Clean trucks with no false alarm | 39 of 44 | | specificity 89% |
 
 Reading: 61 of the 101 labelled photos are three-quarter views and 16 are rear or front views. The measurement stages only
 report when a side or rear view gives them a scale object, so on this uncontrolled set they are deliberately conservative:
-clean trucks are rarely flagged (89% specificity) but only 5 of 41 labelled positive checks were caught. Verdicts on the set: 50 GO, 8 WARN, 8 NO-GO, 35 CANNOT ASSESS.
+clean trucks are rarely flagged (89% specificity) but only 6 of 41 labelled positive checks were caught. Verdicts on the set: 52 GO, 7 WARN, 9 NO-GO, 33 CANNOT ASSESS.
 Roll and height are reported on side and rear views (rear views take scale from the 2.55 m body width); three-quarter views are gated to CANNOT ASSESS.
 The detector stages are robust (truck found on 86 to 97 percent of real truck photos, night included). The measurement stages
 need the controlled geometry of a fixed gate camera, which is the product configuration. Mean latency 0.20 s per image on CPU.
@@ -119,6 +119,10 @@ confidence is reduced accordingly.
 ### Known failure cases
 - Front-only or three-quarter views: body edges are foreshortened, roll confidence is reduced.
 - No wheels or body edge visible: no scale, overhang and height are skipped.
+- Wheels hidden by shadow, tanks or skirts: the circle finder can lock onto a toolbox or a wheel arch. A tall load then reads
+  as 8 m or more; any height above 8 m is reported in brackets as an unreliable scale, not as a measurement.
+- A tall load makes the COCO truck mask nearly square; the vehicle-only box from the open-vocabulary detector is used for the
+  view, the wheel search and the body width, and the full mask for the load top.
 - Dark trucks at night: mask boundary noisy, roll may be reported with low confidence.
 - Cargo that matches the body colour is sometimes merged into the truck mask, hiding overhang.
 - The open-vocabulary "cargo" prompt misses the load on 37 of 101 labelled photos, which is the main cause of

@@ -41,7 +41,13 @@ def find_wheels(img: np.ndarray, mask: np.ndarray, tb: Box) -> list[Box]:
     g = cv2.createCLAHE(2.0, (8, 8)).apply(g)
     g = cv2.medianBlur(g, 5)
     ths = th * f
-    rmin, rmax = max(5, int(ths * 0.05)), int(ths * 0.22)
+    # wheel radius bound: in a side view a 1.05 m wheel is at most ~11 % of the rig length (>= 5 m), so bound
+    # by width there; the box height is unreliable because a tall load is often inside the truck mask.
+    tw = max(x2 - x1, 1)
+    side = tw / th >= 1.6
+    rmax_px = th * 0.22 if not side else min(th * 0.22, tw * 0.11)
+    rmin_px = th * 0.05
+    rmin, rmax = max(5, int(rmin_px * f)), max(6, int(rmax_px * f))
     c = cv2.HoughCircles(g, cv2.HOUGH_GRADIENT, dp=1.2, minDist=int(ths * 0.15), param1=120, param2=30,
                          minRadius=rmin, maxRadius=rmax)
     if c is None:
