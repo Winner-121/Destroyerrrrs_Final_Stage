@@ -1,4 +1,4 @@
-name: Deploy to Hugging Face Space
+name: Deploy to Modal
 on:
   push:
     branches: [main]
@@ -8,14 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          fetch-depth: 0
-          lfs: true
-      - name: Push to HF Space
+          python-version: "3.12"
+      - run: pip install modal
+      - name: Deploy
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_SPACE: ${{ secrets.HF_SPACE }}   # e.g. username/load-safety-gate
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git push --force https://user:$HF_TOKEN@huggingface.co/spaces/$HF_SPACE HEAD:main
+          MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+          MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+        run: modal deploy modal_app.py

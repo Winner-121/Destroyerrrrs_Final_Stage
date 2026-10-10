@@ -1,17 +1,3 @@
----
-title: Load Safety Gate
-emoji: 🚚
-colorFrom: yellow
-colorTo: red
-sdk: gradio
-sdk_version: 6.30.0
-app_file: app.py
-python_version: "3.12"
-pinned: false
-license: agpl-3.0
-short_description: Truck load GO/NO-GO from one photo - roll, overhang, height
----
-
 # Load Safety Gate
 
 One photo of a loaded truck at the depot gate → **GO / WARN / NO-GO** with three measured checks:
@@ -54,8 +40,9 @@ python app.py                      # Gradio UI, same as the deployed Space, http
 
 ## Deployment
 
-Hugging Face Space (Gradio SDK, ZeroGPU flavor, inference on CPU so no GPU quota is used) deployed from this repository by GitHub Actions on every push to `main`
-(`.github/workflows/deploy.yml`). Secrets: `HF_TOKEN`, `HF_SPACE`.
+Modal (serverless CPU container, one instance kept warm) deployed from this repository by GitHub Actions on every push to `main`
+(`.github/workflows/deploy.yml`, `modal_app.py`). Secrets: `MODAL_TOKEN_ID`, `MODAL_TOKEN_SECRET`.
+Hugging Face Spaces was the first choice but compute Spaces require a paid plan on the team's account.
 
 Public URL: _to be filled_
 
