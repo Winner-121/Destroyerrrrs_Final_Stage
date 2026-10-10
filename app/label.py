@@ -53,7 +53,7 @@ class Store:
 
 STORE = Store()
 ITEMS = _items()
-FIELDS = ["view", "roll_label", "side_overhang", "rear_overhang", "over_height", "valid"]
+FIELDS = ["view", "roll_label", "side_overhang", "rear_overhang", "over_height", "load_position", "valid"]
 
 
 def _check(slug):

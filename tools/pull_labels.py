@@ -16,6 +16,7 @@ with open(ROOT / "data" / "labels.csv") as f:
                       "side_overhang": "unclear" if L.get("valid") == "no" else L.get("side_overhang", ""),
                       "rear_overhang": "unclear" if L.get("valid") == "no" else L.get("rear_overhang", ""),
                       "over_height": "unclear" if L.get("valid") == "no" else L.get("over_height", ""),
+                      "load_position": "unclear" if L.get("valid") == "no" else L.get("load_position", ""),
                       "notes": (("not a truck; " if L.get("valid") == "no" else "") + L.get("notes", "") + f" [by {L.get('by','?')}]").strip()})
         rows.append(r)
 with open(ROOT / "data" / "labels.csv", "w", newline="") as f:
