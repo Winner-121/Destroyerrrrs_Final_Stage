@@ -14,8 +14,8 @@ Hard rules (from REQUIREMENTS.txt):
 
 Scope that is frozen: three checks, one pretrained zero-shot detector
 (YOLO-World or equivalent), OpenCV geometry, threshold decision layer,
-one Gradio web app on a Hugging Face ZeroGPU Space (free tier; Docker/CPU Spaces need a paid plan).
-Inference runs on CPU in the main process (~120 ms/image), the GPU is never requested, so visitors spend no quota.
+web app on Modal (HF Spaces refused: compute Spaces need PRO on the team account).
+LIVE: https://amir-kuldashev--load-safety-gate-web.modal.run  (CPU, ~170 ms/image warm, one container kept warm)
 Fine-tuning is optional (hour 7+).
 
 Legend: [C] Claude does it   [H] a human must do it   [C+H] Claude drafts, human verifies/decides
@@ -27,8 +27,8 @@ Legend: [C] Claude does it   [H] a human must do it   [C+H] Claude drafts, human
 [C]  Write requirements.txt, Dockerfile / HF Space config, GitHub Actions deploy workflow.
 [C]  Write pipeline/config.yaml with class prompts and decision thresholds
      (initial values; trailer width 2.55 m used as scale).
-[H]  DONE: GitHub repo. TODO: run `hf auth login` in this session (`! hf auth login`),
-     then Claude creates the ZeroGPU Space and wires the GitHub Action secrets HF_TOKEN / HF_SPACE.
+[H]  DONE: GitHub repo, Modal account, first deploy. TODO: add GitHub Actions secrets
+     MODAL_TOKEN_ID / MODAL_TOKEN_SECRET (commands given in chat) so pushes redeploy automatically.
 [H]  Decide the team name and the first-slide mode ("Startup").
 [C+H] Regulation thresholds for width, height, rear overhang: Claude drafts
      from public road-code sources; a human confirms the local values.

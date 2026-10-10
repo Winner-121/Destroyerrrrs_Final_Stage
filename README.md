@@ -44,7 +44,7 @@ Modal (serverless CPU container, one instance kept warm) deployed from this repo
 (`.github/workflows/deploy.yml`, `modal_app.py`). Secrets: `MODAL_TOKEN_ID`, `MODAL_TOKEN_SECRET`.
 Hugging Face Spaces was the first choice but compute Spaces require a paid plan on the team's account.
 
-Public URL: _to be filled_
+Public URL: https://amir-kuldashev--load-safety-gate-web.modal.run
 
 ## Evaluation
 
