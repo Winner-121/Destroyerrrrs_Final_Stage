@@ -26,6 +26,10 @@ photo ──► YOLO-World (open-vocabulary boxes: truck, trailer, cargo, wheel,
 - **Overhang** = cargo box extent beyond the body edge at cargo height. Rear overhang in a side view, side overhang in a rear view.
   In a rear view with the load stacked above the body, the load width comes from the truck mask above the vehicle box.
 - **Height** = highest point of anything resting on the truck (cargo boxes, truck mask, any detection whose bottom sits inside the truck box) to ground, scaled by the wheel diameter or the body width.
+- **Load lean (experimental)** = for a load stacked above the body in a rear view, the mean angle of the stack's two side
+  edges against the image vertical (averaging both edges cancels perspective), plus whether the stack is wider at the top
+  than at the body. Thresholds 5 and 10 degrees are ours: no regulation covers stack lean. It only runs in that one
+  configuration, so it has a thin test set (see Evaluation).
 - Low-confidence or missing inputs produce `CANNOT ASSESS` or a skipped check, never a guess.
 
 Models are pretrained and untrained by us (Ultralytics YOLO-World v2 and YOLOv8s-seg, AGPL-3.0).
