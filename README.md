@@ -40,9 +40,9 @@ Our own work is the pipeline, the geometry, the decision rules, the evaluation s
 ```bash
 python -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
-python app.py                      # Gradio UI, same as the deployed Space, http://localhost:7860
-# or the FastAPI variant: uvicorn app.main:app --port 7860
-# CLI: python -m pipeline.run path/to/truck.jpg out.jpg
+uvicorn app.main:app --port 7860       # web app, same code as the deployed version, http://localhost:7860
+python -m pipeline.run path/to/truck.jpg out.jpg    # command line: verdict as JSON, annotated image to out.jpg
+python eval/smoke_test.py path/to/truck.jpg         # first health check
 ```
 
 ## Deployment
@@ -58,8 +58,21 @@ Public URL: https://amir-kuldashev--load-safety-gate-web.modal.run
 Uzbekistan, Cabinet of Ministers Decree No. 342 of 26 Dec 2011, Annex 2 (via [Uzavtoyul](https://gov.uz/ru/uzavtoyul/sections/view/48313)):
 a vehicle, loaded or empty, is oversized when height exceeds **4.0 m**, width exceeds **2.55 m** (2.6 m for refrigerated bodies),
 or cargo protrudes more than **2 m** beyond the rear of the body. Beyond these limits a special permit and escort rules apply.
-The decision layer uses exactly these values (`pipeline/config.yaml`); roll thresholds (3 degrees warn, 6 degrees fail) are
+The decision layer uses exactly these values (`pipeline/config.yaml`); roll thresholds (4 degrees warn, 7 degrees fail) are
 engineering choices, not regulation, and are stated as such.
+
+## Real conditions, as required by the brief
+
+- **Where inference runs:** one CPU container on Modal, 2 cores, 4 GiB, kept warm; no GPU. The same code runs on a laptop or a
+  small edge box with `uvicorn`, the Dockerfile builds the identical image for self-hosting.
+- **Speed:** 0.2 s per image measured on the deployed container, about 0.3 s end to end on a phone over 4G.
+- **Cost:** below $0.001 of compute per inspection, about $90 per month for the always-warm server, one server serves many gates.
+- **Night:** the truck is found on 97 % of the 41 night photos, the most robust stage; edges are noisier so roll confidence
+  drops and the check is skipped more often. Measured, see Evaluation.
+- **Rain:** not measured. The licensed set holds only two rain photos, too few to report a number.
+- **Local vehicles and plates:** the set is international Commons photos with a handful of CIS and Uzbek trucks, so numbers for
+  local fleets are not yet measured; month one of the pilot collects them at the gate. Plates and faces are found with an
+  open-vocabulary prompt and pixelated before storage or display, on every image, whatever the plate format.
 
 ## Cost model
 
@@ -151,10 +164,25 @@ No faces or plates are stored unblurred. No customer or personal data is used.
 
 | Source | Licence | Use |
 |---|---|---|
-| Open Images V7 (truck class) | CC BY 4.0 annotations, CC BY 2.0 images | test set |
-| Pexels / Unsplash | Pexels License / Unsplash License | test set, night and rain |
+| Wikimedia Commons, CC BY-SA 4.0 | 137 images | test set and hit rate |
+| Wikimedia Commons, CC BY-SA 3.0 | 33 images | test set and hit rate |
+| Wikimedia Commons, CC BY-SA 2.0 | 31 images | test set and hit rate |
+| Wikimedia Commons, CC BY 2.0 | 28 images | test set and hit rate |
+| Wikimedia Commons, Public domain | 22 images | test set and hit rate |
+| Wikimedia Commons, CC0 | 17 images | test set and hit rate |
+| Wikimedia Commons, CC BY 4.0 | 13 images | test set and hit rate |
+| Wikimedia Commons, CC BY 3.0 | 10 images | test set and hit rate |
+| Wikimedia Commons, CC BY-SA 3.0 de | 4 images | test set and hit rate |
+| Wikimedia Commons, CC BY-SA 3.0 it | 2 images | test set and hit rate |
+| Wikimedia Commons, CC BY-SA 3.0 au | 2 images | test set and hit rate |
+| Wikimedia Commons, CC BY 2.5 | 1 images | test set and hit rate |
+| Wikimedia Commons, CC BY 2.1 jp | 1 images | test set and hit rate |
 | Rotated copies of team-labelled level Commons photos | same licence as the source image | roll accuracy, declared synthetic |
 | Ultralytics YOLO-World v2, YOLOv8s-seg weights | AGPL-3.0 | detection |
+
+All 301 photos come from Wikimedia Commons categories (car_carrier 70, overloaded 60, flatbed 55, oversized 45, night 41, semi 30), fetched by
+`tools/fetch_commons.py`, which records URL, licence and author per file. Six of them are served as demo examples with their
+attribution in `app/static/examples/ATTRIBUTION.json`. No photo was taken by the team and no partner or customer data is used.
 
 ## Libraries
 Ultralytics, OpenCV, NumPy, FastAPI, Uvicorn, Pillow, PyYAML. Built during the final by the team with LLM coding assistance.
