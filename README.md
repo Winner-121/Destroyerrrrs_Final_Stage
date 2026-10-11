@@ -1,6 +1,6 @@
 # Load Safety Gate
 
-One photo of a loaded truck at the depot gate → **GO / WARN / NO-GO** with three measured checks:
+Single photo of a loaded truck at the depot gate → **GO / WARN / NO-GO** with three measured checks:
 body roll, cargo overhang, and height. Plates and people are pixelated before anything is stored or shown.
 
 Track: Computer Vision (automotive business and road safety). Mode: Startup. Customer: fleet owners and freight
