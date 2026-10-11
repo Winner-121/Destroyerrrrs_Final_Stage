@@ -112,6 +112,14 @@ const fails = [["../eval/out/raw/overloaded/" + (fs.existsSync("../eval/out/raw/
 fails.forEach((f, i) => { const x = 0.5 + i * 4.15; if (img(f[0])) s.addImage({ path: f[0], x, y: 1.4, w: 3.95, h: 2.9, sizing: { type: "contain", w: 3.95, h: 2.9 } }); TB(s, f[1], { x, y: 4.4, w: 3.95, h: 1.4, fontSize: 12, color: C.text2, valign: "top" }); });
 card(s, 0.5, 5.9, 12.3, 0.95, "Design rule", "Every check reports a confidence and is skipped below a floor. A skipped check is shown as such, never as a pass.", THEME.colors.accent6);
 
+// 8 Replication
+s = pres.addSlide({ masterName: "DARK", sectionTitle: "Technology" });
+TB(s, "The replication test", { x: 0.7, y: 0.5, w: 12, h: 0.8, fontSize: 36, bold: true, color: C.background1, fontFace: THEME.headFontFace });
+TB(s, "A weekend with the same tools gets you", { x: 0.7, y: 1.5, w: 5.8, h: 0.5, fontSize: 18, bold: true, color: THEME.colors.accent5 });
+TB(s, bullets(["A detector that draws boxes around trucks and cargo", "A prompt to a vision model that says \"looks overloaded\"", "No measurement, no threshold, no number a gate operator can act on"]), { x: 0.7, y: 2.1, w: 5.8, h: 3.5, fontSize: 15, color: C.background1, isTextBox: true, margin: 0, valign: "top" });
+TB(s, "What they do not get", { x: 6.9, y: 1.5, w: 5.8, h: 0.5, fontSize: 18, bold: true, color: THEME.colors.accent1 });
+TB(s, bullets(["Perspective-safe roll from vertical edges, with a gravity reference in the same image", "Centimetres and metres from a known object in the frame, and a CANNOT ASSESS path", "A decision layer written from Decree 342, the regulation a police post actually applies", "A privacy stage that makes the product legal to pilot", "301 licensed images with hit rates, 120 labelled, and a deployed gate product"]), { x: 6.9, y: 2.1, w: 5.8, h: 4.0, fontSize: 15, color: C.background1, isTextBox: true, margin: 0, valign: "top" });
+
 // 9 Budget and ROI
 pres.addSection({ title: "Business" });
 s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Business" });
