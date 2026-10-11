@@ -14,11 +14,11 @@
   "attribution": "Havang(nl)"
  },
  {
-  "file": "3_oversized.jpg",
-  "original": "oversized_A_Loaded_Loader_16580266480_jpg.jpg",
-  "source": "https://commons.wikimedia.org/wiki/File:A_Loaded_Loader_(16580266480).jpg",
-  "licence": "CC BY 2.0 https://creativecommons.org/licenses/by/2.0",
-  "attribution": "Barry Lewis"
+  "file": "3_tipper.jpg",
+  "original": "semi_Big_truck_for_transportation_of_goods_jpg.jpg",
+  "source": "https://commons.wikimedia.org/wiki/File:Big_truck_for_transportation_of_goods.jpg",
+  "licence": "CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0",
+  "attribution": "Osezele Favour Eboseyi"
  },
  {
   "file": "4_night.jpg",
@@ -33,5 +33,12 @@
   "source": "https://commons.wikimedia.org/wiki/File:Abnormal_Load._Front_End_Loader._Mammoet._Near_Ogies._15.3.2012._(12035650645).jpg",
   "licence": "CC BY-SA 2.0 https://creativecommons.org/licenses/by-sa/2.0",
   "attribution": "Bob Adams from George, South Africa"
+ },
+ {
+  "file": "6_tilted_load.jpg",
+  "original": "overloaded_Bushtaxi_in_Bonab_ri_jpg.jpg",
+  "source": "https://commons.wikimedia.org/wiki/File:Bushtaxi_in_Bonab%C3%A9ri.jpg",
+  "licence": "CC0 http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "attribution": "Bmnda"
  }
 ]
