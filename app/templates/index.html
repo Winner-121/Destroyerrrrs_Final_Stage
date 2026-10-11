@@ -2,73 +2,106 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1419">
 <title>Load Safety Gate</title>
 <style>
-  :root { --bg:#0f1419; --card:#1a2129; --fg:#e8edf2; --muted:#8a97a5; --go:#2ea84a; --warn:#f0a020; --nogo:#e03a3a; --skip:#6b7680; }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
-  main { max-width:760px; margin:0 auto; padding:16px; }
-  h1 { font-size:1.4rem; margin:8px 0 2px; }
-  .sub { color:var(--muted); margin:0 0 16px; font-size:.95rem; }
-  .card { background:var(--card); border-radius:12px; padding:16px; margin-bottom:14px; }
-  label.btn, button { display:inline-block; background:#2b6cb0; color:#fff; border:0; border-radius:10px; padding:12px 18px; font-size:1rem; cursor:pointer; }
+  :root { --bg:#0f1419; --card:#1a2129; --card2:#222b35; --line:#2d3742; --fg:#e8edf2; --muted:#8a97a5; --go:#2ea84a; --warn:#f0a020; --nogo:#e03a3a; --skip:#6b7680; --accent:#2b6cb0; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { background:var(--bg); }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; padding-bottom:env(safe-area-inset-bottom); }
+  main { max-width:720px; margin:0 auto; padding:14px 16px 32px; }
+  header { display:flex; align-items:center; gap:12px; margin:4px 0 14px; }
+  .mark { width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,var(--go),var(--nogo)); display:grid; place-items:center; font-weight:800; font-size:18px; color:#fff; flex:none; }
+  h1 { font-size:1.25rem; margin:0; line-height:1.2; }
+  .tag { color:var(--muted); font-size:.85rem; margin:2px 0 0; }
+  .card { background:var(--card); border-radius:14px; padding:14px; margin-bottom:12px; }
+  .label { color:var(--muted); font-size:.78rem; text-transform:uppercase; letter-spacing:.06em; margin:0 0 8px; }
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .stat { background:var(--card2); border-radius:10px; padding:10px 6px; text-align:center; }
+  .stat b { display:block; font-size:1.45rem; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .stat span { display:block; font-size:.72rem; color:var(--muted); margin-top:3px; white-space:nowrap; }
+  .stat.go b { color:var(--go);} .stat.warn b { color:var(--warn);} .stat.nogo b { color:var(--nogo);}
+  .actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .btn { display:flex; align-items:center; justify-content:center; gap:8px; min-height:52px; border:0; border-radius:12px; padding:10px 12px; font-size:1rem; font-weight:600; color:#fff; background:var(--accent); cursor:pointer; text-align:center; }
+  .btn.alt { background:var(--card2); }
+  .btn:active { filter:brightness(1.15); }
   input[type=file] { display:none; }
-  .examples button { background:#2d3742; margin:4px 4px 0 0; padding:8px 12px; font-size:.9rem; }
-  #verdict { font-size:2rem; font-weight:700; padding:10px 16px; border-radius:10px; text-align:center; }
+  .examples { display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:8px; margin-top:4px; }
+  .ex { position:relative; border:0; padding:0; border-radius:10px; overflow:hidden; background:var(--card2); cursor:pointer; aspect-ratio:3/2; }
+  .ex img { width:100%; height:100%; object-fit:cover; display:block; opacity:.9; }
+  .ex span { position:absolute; left:0; right:0; bottom:0; padding:4px 6px; font-size:.78rem; font-weight:600; color:#fff; background:linear-gradient(transparent, rgba(0,0,0,.75)); text-align:left; text-transform:capitalize; }
+  .hint { color:var(--muted); font-size:.8rem; margin:8px 0 0; }
+  #spin { display:none; align-items:center; gap:10px; color:var(--muted); font-size:.95rem; margin-top:12px; }
+  #spin.on { display:flex; }
+  .dot { width:14px; height:14px; border-radius:50%; border:2px solid var(--muted); border-top-color:transparent; animation:r .8s linear infinite; }
+  @keyframes r { to { transform:rotate(360deg);} }
+  #result { display:none; padding:0; overflow:hidden; }
+  #verdict { font-size:2rem; font-weight:800; padding:14px 16px; text-align:center; letter-spacing:.02em; }
   .GO { background:var(--go);} .WARN { background:var(--warn); color:#111;} .NO-GO { background:var(--nogo);} .CANNOT { background:var(--skip);}
-  table { width:100%; border-collapse:collapse; margin-top:10px; }
-  td, th { text-align:left; padding:8px 6px; border-bottom:1px solid #2d3742; font-size:.95rem; }
-  .pass { color:var(--go);} .warn { color:var(--warn);} .fail { color:var(--nogo);} .skip { color:var(--skip);}
-  img#out { width:100%; border-radius:10px; margin-top:10px; }
-  .meta { color:var(--muted); font-size:.85rem; margin-top:8px; }
-  #spin { display:none; color:var(--muted); }
-  .shift { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-  .shift .k { background:#2d3742; border-radius:8px; padding:6px 10px; font-size:.9rem; }
-  .shift .k b { font-size:1.1rem; margin-left:4px; }
-  .shift .k.go b { color:var(--go);} .shift .k.warn b { color:var(--warn);} .shift .k.nogo b { color:var(--nogo);}
-  #ticket { color:var(--muted); font-size:.9rem; text-align:center; margin:6px 0 0; }
-  #ticket b { color:var(--fg); font-family:ui-monospace,monospace; }
-  .examples .meta { display:block; margin-bottom:4px; }
+  #howto { display:none; margin:0; padding:10px 14px; background:var(--card2); font-size:.9rem; line-height:1.4; }
+  #ticket { margin:0; padding:10px 14px 0; color:var(--muted); font-size:.85rem; }
+  #ticket b { color:var(--fg); font-family:ui-monospace,Menlo,monospace; font-size:.9rem; }
+  .checks { list-style:none; margin:0; padding:6px 14px 4px; }
+  .checks li { display:grid; grid-template-columns:1fr auto; gap:2px 10px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .checks li:last-child { border-bottom:0; }
+  .checks .n { font-weight:600; }
+  .checks .v { font-variant-numeric:tabular-nums; font-weight:700; text-align:right; white-space:nowrap; }
+  .checks .r { grid-column:1 / -1; color:var(--muted); font-size:.82rem; line-height:1.35; }
+  .pill { display:inline-block; font-size:.7rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:2px 7px; border-radius:999px; margin-right:6px; vertical-align:middle; color:#fff; }
+  .pill.pass { background:var(--go);} .pill.warn { background:var(--warn); color:#111;} .pill.fail { background:var(--nogo);} .pill.skip { background:var(--skip);}
+  img#out { width:100%; display:block; background:#000; }
+  .meta { color:var(--muted); font-size:.8rem; padding:10px 14px; line-height:1.4; }
+  .again { margin:0 14px 14px; width:calc(100% - 28px); }
+  footer { color:var(--muted); font-size:.75rem; text-align:center; margin-top:18px; line-height:1.5; }
+  footer a { color:var(--muted); }
 </style>
 </head>
 <body>
 <main>
-  <h1>Load Safety Gate</h1>
-  <p class="sub">Photo of a loaded truck at the gate → GO / NO-GO. Body roll, overhang, height. Plates and people are blurred before anything is shown.</p>
+  <header>
+    <div class="mark">LG</div>
+    <div><h1>Load Safety Gate</h1><p class="tag">One photo at the gate → GO / WARN / NO-GO. Plates and people blurred first.</p></div>
+  </header>
 
-  <div class="card shift" id="shift">
-    <span class="meta">Shift today (UTC)</span>
-    <span class="k">inspections<b id="s_total">–</b></span>
-    <span class="k go">GO<b id="s_go">–</b></span>
-    <span class="k warn">WARN<b id="s_warn">–</b></span>
-    <span class="k nogo">NO-GO<b id="s_nogo">–</b></span>
-    <span class="k">cannot assess<b id="s_cannot">–</b></span>
-  </div>
-
-  <div class="card">
-    <label class="btn" for="file">📷 Take a photo</label>
-    <label class="btn" for="file2" style="background:#2d3742; margin-left:6px">🖼 Choose from gallery</label>
-    <input id="file" type="file" accept="image/*" capture="environment">
-    <input id="file2" type="file" accept="image/*">
-    <span id="spin">&nbsp; analysing…</span>
-    {% if examples %}
-    <div class="examples" style="margin-top:10px">
-      <span class="meta">Or run the live pipeline on an example (nothing is cached, each click is a full run):</span>
-      {% for e in examples %}<button onclick="runExample('{{e}}')">{{ e.rsplit('.', 1)[0].split('_', 1)[1].replace('_', ' ') }}</button>{% endfor %}
+  <section class="card">
+    <p class="label">Shift today, UTC</p>
+    <div class="stats">
+      <div class="stat"><b id="s_total">0</b><span>checked</span></div>
+      <div class="stat go"><b id="s_go">0</b><span>GO</span></div>
+      <div class="stat warn"><b id="s_warn">0</b><span>WARN</span></div>
+      <div class="stat nogo"><b id="s_nogo">0</b><span>NO-GO</span></div>
     </div>
-    {% endif %}
-  </div>
+  </section>
 
-  <div class="card" id="result" style="display:none">
+  <section class="card">
+    <div class="actions">
+      <label class="btn" for="file">📷 Take photo</label>
+      <label class="btn alt" for="file2">🖼 Gallery</label>
+      <input id="file" type="file" accept="image/*" capture="environment">
+      <input id="file2" type="file" accept="image/*">
+    </div>
+    <div id="spin"><span class="dot"></span><span>Analysing on the server…</span></div>
+    {% if examples %}
+    <p class="label" style="margin-top:14px">Or try an example, live run</p>
+    <div class="examples">
+      {% for e in examples %}<button class="ex" onclick="runExample('{{e}}')"><img src="/static/examples/thumbs/{{e}}" alt="" loading="lazy"><span>{{ e.rsplit('.', 1)[0].split('_', 1)[1].replace('_', ' ') }}</span></button>{% endfor %}
+    </div>
+    <p class="hint">Nothing is cached. Every tap runs the full pipeline on CPU.</p>
+    {% endif %}
+  </section>
+
+  <section class="card" id="result">
     <div id="verdict"></div>
+    <p id="howto">To get a measurement: stand to the side or straight behind the truck, 10 to 15 m away, phone level and in landscape, whole truck and wheels in the frame.</p>
     <p id="ticket"></p>
-    <p id="howto" class="meta" style="display:none; text-align:center; color:var(--fg)">To get a measurement: stand to the side or straight behind the truck, 10 to 15 m away, phone held level and in landscape, whole truck and wheels in the frame.</p>
-    <table id="checks"></table>
+    <ul class="checks" id="checks"></ul>
     <img id="out" alt="annotated result">
     <div class="meta" id="meta"></div>
-    <div class="meta" id="notes"></div>
-  </div>
+    <button class="btn alt again" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Check another truck</button>
+  </section>
+
+  <footer>Team Destroyerrrrs · Computer Vision track · Thresholds from Decree 342 · <a href="https://github.com/Winner-121/Destroyerrrrs_Final_Stage">source</a></footer>
 </main>
 <script>
 const $ = s => document.querySelector(s);
@@ -79,28 +112,29 @@ for (const id of ['#file', '#file2']) $(id).addEventListener('change', async e =
   e.target.value = '';
 });
 async function runExample(name){ await run(fetch('/analyse/example/'+name)); }
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 async function run(p){
-  $('#spin').style.display='inline'; $('#result').style.display='none';
+  $('#spin').classList.add('on'); $('#result').style.display='none';
   try {
     const r = await (await p).json();
+    if (r.error) throw new Error(r.error);
     const v = $('#verdict'); v.textContent = r.verdict; v.className = r.verdict.split(' ')[0];
-    $('#checks').innerHTML = '<tr><th>Check</th><th>Value</th><th>Status</th><th>Conf.</th><th>Why</th></tr>' +
-      r.checks.map(c=>`<tr class="${c.status}"><td>${c.name}</td><td>${c.value}</td><td>${c.status}</td><td>${c.confidence}</td><td>${c.reason}</td></tr>`).join('');
-    $('#out').src = 'data:image/jpeg;base64,' + r.image_b64;
-    $('#meta').textContent = `view: ${r.view} · scale: ${r.scale_source} · ${r.timings_ms.total} ms on ${r.device} · ${r.privacy_regions_blurred} privacy region(s) blurred`;
-    $('#notes').textContent = r.notes.length ? 'notes: ' + r.notes.join(' · ') : '';
     $('#howto').style.display = r.verdict.startsWith('CANNOT') ? 'block' : 'none';
-    $('#ticket').innerHTML = `Inspection ticket <b>${r.ticket}</b> · logged in the shift journal (numbers only, the photo is not stored)`;
+    $('#ticket').innerHTML = `Ticket <b>${esc(r.ticket)}</b> · logged in the shift journal, numbers only, photo discarded`;
+    $('#checks').innerHTML = r.checks.map(c => `<li><span class="n">${esc(c.name)}</span><span class="v">${esc(c.value)}</span><span class="r"><span class="pill ${esc(c.status)}">${esc(c.status)}</span>${esc(c.reason)}${c.confidence ? ' · conf ' + esc(c.confidence) : ''}</span></li>`).join('');
+    $('#out').src = 'data:image/jpeg;base64,' + r.image_b64;
+    $('#meta').textContent = `view: ${r.view} · scale: ${r.scale_source} · ${r.timings_ms.total} ms on ${r.device} · ${r.privacy_regions_blurred} privacy region(s) blurred` + (r.notes.length ? ` · ${r.notes.join(' · ')}` : '');
     if (r.stats) showStats(r.stats);
     $('#result').style.display='block';
-  } catch(err){ alert('Error: '+err); }
-  $('#spin').style.display='none';
+    $('#result').scrollIntoView({behavior:'smooth', block:'start'});
+  } catch(err){ alert('Error: '+err.message); }
+  $('#spin').classList.remove('on');
 }
 function showStats(s){
-  $('#s_total').textContent = s.total; $('#s_go').textContent = s.GO; $('#s_warn').textContent = s.WARN;
-  $('#s_nogo').textContent = s['NO-GO']; $('#s_cannot').textContent = s['CANNOT ASSESS'];
+  $('#s_total').textContent = s.total; $('#s_go').textContent = s.GO; $('#s_warn').textContent = s.WARN; $('#s_nogo').textContent = s['NO-GO'];
 }
 fetch('/stats').then(r=>r.json()).then(showStats).catch(()=>{});
+const auto = new URLSearchParams(location.search).get('example'); if (auto) runExample(auto);
 </script>
 </body>
 </html>
