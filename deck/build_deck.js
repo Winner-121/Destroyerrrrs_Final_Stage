@@ -80,10 +80,14 @@ card(s, 6.8, 5.2, 6.0, 1.6, "Borrowed, with attribution", "Two pretrained Ultral
 // 5 Relative to what
 s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Technology" });
 s.addText("Measured relative to the truck itself, so a phone photo is honest", { placeholder: "title" });
-card(s, 0.5, 1.5, 4.0, 3.6, "Body roll", "Horizontal edges converge under perspective, so a level truck looks tilted if you compare top and bottom edges. We use the body's vertical edges instead: left and right halves converge in opposite directions and their mean cancels perspective. Reference: vertical lines in the scene (poles, walls), else the camera vertical at lower confidence.", THEME.colors.accent2);
-card(s, 4.65, 1.5, 4.0, 3.6, "Overhang", "Cargo extent beyond the body edge at cargo height. Rear overhang in a side view, side overhang in a rear view. Converted to centimetres with a known object in the same image: body width 2.55 m or wheel diameter 1.05 m.", THEME.colors.accent4);
-card(s, 8.8, 1.5, 4.0, 3.6, "Height", "Ground line through the tyre contact points to the top of cargo or body, same scale. Compared with the 4.0 m legal limit.", THEME.colors.accent1);
-card(s, 0.5, 5.3, 12.3, 1.4, "Product version", "A fixed gate camera with known position and a reference marker removes the remaining ambiguity. The phone mode you see today is the degraded fallback, and it says CANNOT ASSESS when the view does not support a measurement.", THEME.colors.accent3);
+const pics = [["../eval/out/flatbed_13_08_09_hongkong_by_RalfR_016_jpg.jpg", "Body roll", "Green: the body's vertical edges. Cyan: vertical lines in the scene. The angle between them is the roll, so a tilted phone does not tilt the truck.", THEME.colors.accent2],
+  ["../eval/out/car_carrier_Ram_3500_DS_Towing_BMW_X5_F15_JPG.jpg", "Overhang", "Red: cargo beyond the body edge, converted to centimetres with the 1.05 m wheel or the 2.55 m body width in the same photo.", THEME.colors.accent4],
+  ["../eval/out/oversized_Abnormal_Load_Front_End_Loader_Mammoet_Near_Ogies_15_3_2012.jpg", "Height", "Magenta: cargo top to the ground line through the tyres, in metres, against the 4.0 m limit.", THEME.colors.accent1]];
+pics.forEach((pc, i) => { const x = 0.5 + i * 4.15; if (img(pc[0])) s.addImage({ path: pc[0], x, y: 1.4, w: 3.95, h: 2.9, sizing: { type: "contain", w: 3.95, h: 2.9 } });
+  TB(s, pc[1], { x, y: 4.4, w: 3.95, h: 0.4, bold: true, fontSize: 16, color: pc[3] });
+  TB(s, pc[2], { x, y: 4.8, w: 3.95, h: 1.3, fontSize: 12, color: C.text2, valign: "top" }); });
+TB(s, "Every number is relative to an object in the same photo. No camera calibration, no absolute pose. When the photo has no usable reference the check says CANNOT ASSESS.", { x: 0.5, y: 6.1, w: 12.3, h: 0.5, fontSize: 13, color: C.text1 });
+TB(s, "Photos: Wikimedia Commons, Ralf Roletschek (CC BY 3.0); Bull-Doser (Public domain); Bob Adams from George, South Africa (CC BY-SA 2.0). Annotations drawn by the pipeline.", { x: 0.5, y: 6.6, w: 12.3, h: 0.35, fontSize: 8, color: THEME.colors.accent5 });
 
 // 6 Quality
 s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Technology" });
