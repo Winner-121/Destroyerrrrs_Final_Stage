@@ -15,24 +15,35 @@ pres.defineSlideMaster({ title: "DARK", background: { color: THEME.colors.dk1 },
   { text: { text: FOOT, options: { x: 0.5, y: 7.05, w: 9, h: 0.3, fontSize: 10, color: THEME.colors.accent5, margin: 0 } } } ],
   slideNumber: { x: 12.3, y: 7.05, w: 0.6, h: 0.3, fontSize: 10, color: THEME.colors.accent5 } });
 pres.defineSlideMaster({ title: "LIGHT", background: { color: THEME.colors.lt1 }, objects: [
-  { placeholder: { options: { name: "title", type: "title", x: 0.5, y: 0.35, w: 12.3, h: 0.8, fontSize: 32, bold: true, color: THEME.colors.dk1, margin: 0, valign: "middle" }, text: "" } },
+  { placeholder: { options: { name: "title", type: "title", x: 0.75, y: 0.35, w: 12.05, h: 0.8, fontSize: 32, bold: true, color: THEME.colors.dk1, margin: 0, valign: "middle" }, text: "" } },
   { text: { text: FOOT, options: { x: 0.5, y: 7.05, w: 9, h: 0.3, fontSize: 10, color: THEME.colors.accent5, margin: 0 } } } ],
   slideNumber: { x: 12.3, y: 7.05, w: 0.6, h: 0.3, fontSize: 10, color: THEME.colors.accent5 } });
 
 const TB = (s, text, o) => s.addText(text, Object.assign({ isTextBox: true, margin: 0, fontSize: 14, color: C.text1 }, o));
 const pill = (s, text, x, y, w, color, fg) => { s.addShape(pres.ShapeType.roundRect, { x, y, w, h: 0.5, fill: { color }, rectRadius: 0.25, line: { color, width: 0 } }); TB(s, text, { x, y, w, h: 0.5, align: "center", valign: "middle", bold: true, color: fg || C.background1, fontSize: 14 }); };
 const card = (s, x, y, w, h, title, body, accent) => {
-  s.addShape(pres.ShapeType.rect, { x, y, w, h, fill: { color: THEME.colors.lt2 }, line: { color: THEME.colors.lt2, width: 0 } });
+  s.addShape(pres.ShapeType.roundRect, { x, y, w, h, rectRadius: 0.12, fill: { color: THEME.colors.lt2 }, line: { color: THEME.colors.lt2, width: 0 }, shadow: SHADOW });
+  s.addShape(pres.ShapeType.rect, { x, y: y + 0.25, w: 0.07, h: h - 0.5, fill: { color: accent || THEME.colors.accent1 }, line: { color: accent || THEME.colors.accent1, width: 0 } });
   s.addShape(pres.ShapeType.ellipse, { x: x + 0.2, y: y + 0.2, w: 0.42, h: 0.42, fill: { color: accent || THEME.colors.accent1 }, line: { color: accent || THEME.colors.accent1, width: 0 } });
   TB(s, title, { x: x + 0.75, y: y + 0.15, w: w - 0.95, h: 0.5, bold: true, fontSize: 16, valign: "middle" });
   TB(s, body, { x: x + 0.2, y: y + 0.68, w: w - 0.4, h: h - 0.78, fontSize: 12, color: C.text2, valign: "top" });
+};
+const SHADOW = { type: "outer", blur: 6, offset: 2, angle: 60, color: "000000", opacity: 0.18 };
+const orbs = (s, variant) => {           // soft translucent circles on dark slides
+  const sets = [[[9.6, -1.6, 5.2, THEME.colors.accent2, 72], [-1.4, 4.6, 4.0, THEME.colors.accent1, 84], [11.6, 5.4, 2.6, THEME.colors.accent3, 80]],
+                [[-1.8, -1.8, 4.6, THEME.colors.accent2, 78], [10.2, 4.4, 4.4, THEME.colors.accent4, 84]]][variant || 0];
+  sets.forEach(([x, y, d, color, tr]) => s.addShape(pres.ShapeType.ellipse, { x, y, w: d, h: d, fill: { color, transparency: tr }, line: { color, width: 0 } }));
+};
+const titleAccent = (s, color) => {      // accent bar beside the title and a hairline under it on light slides
+  s.addShape(pres.ShapeType.rect, { x: 0.5, y: 0.45, w: 0.12, h: 0.6, fill: { color: color || THEME.colors.accent1 }, line: { color: color || THEME.colors.accent1, width: 0 } });
+  s.addShape(pres.ShapeType.line, { x: 0.5, y: 1.25, w: 12.3, h: 0, line: { color: THEME.colors.lt2, width: 1.5 } });
 };
 const bullets = (items) => items.map((t, i) => ({ text: t, options: { bullet: true, breakLine: i < items.length - 1, paraSpaceAfter: 6 } }));
 const img = (p) => fs.existsSync(p) ? p : null;
 
 // 1 Title
 pres.addSection({ title: "Opening" });
-let s = pres.addSlide({ masterName: "DARK", sectionTitle: "Opening" });
+let s = pres.addSlide({ masterName: "DARK", sectionTitle: "Opening" }); orbs(s, 0); orbs(s, 0);
 TB(s, "Load Safety Gate", { x: 0.7, y: 1.4, w: 11.5, h: 1.2, fontSize: 54, bold: true, color: C.background1, fontFace: THEME.headFontFace });
 TB(s, "One photo at the gate. GO or NO-GO before the truck leaves.", { x: 0.7, y: 2.6, w: 11.5, h: 0.7, fontSize: 24, color: THEME.colors.accent1 });
 TB(s, "Mode: Startup   ·   Track: Computer Vision   ·   Team Destroyerrrrs", { x: 0.7, y: 3.5, w: 11.5, h: 0.5, fontSize: 16, color: THEME.colors.accent5 });
@@ -41,7 +52,7 @@ TB(s, "Body roll  ·  Overhang  ·  Height  ·  Plates and people blurred before
 
 // 2 Problem and user
 pres.addSection({ title: "Problem" });
-s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Problem" });
+s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Problem" }); titleAccent(s, THEME.colors.accent4);
 s.addText("A badly loaded truck is checked by eye, or not at all", { placeholder: "title" });
 card(s, 0.5, 1.3, 6.0, 1.3, "Who uses it", "Gate operator or dispatcher at a terminal, fleet depot or dealer receiving yard. One photo, one answer, before the truck leaves.", THEME.colors.accent2);
 card(s, 0.5, 2.72, 6.0, 1.3, "What goes wrong today", "One-sided loads roll over. Overhanging cargo hits bridges and other vehicles. Oversized loads draw fines and stop the truck at the first police post.", THEME.colors.accent4);
@@ -53,7 +64,7 @@ TB(s, "Live output of the deployed pipeline on a licensed test image (Wikimedia 
 
 // 3 Live demo
 pres.addSection({ title: "Demo" });
-s = pres.addSlide({ masterName: "DARK", sectionTitle: "Demo" });
+s = pres.addSlide({ masterName: "DARK", sectionTitle: "Demo" }); orbs(s, 1);
 TB(s, "Live demo", { x: 0.7, y: 0.5, w: 12, h: 0.8, fontSize: 36, bold: true, color: C.background1, fontFace: THEME.headFontFace });
 TB(s, "amir-kuldashev--load-safety-gate-web.modal.run", { x: 0.7, y: 1.4, w: 12, h: 0.7, fontSize: 26, color: THEME.colors.accent1, fontFace: "Courier New" });
 TB(s, "Open it on your phone. Take a photo of any truck, or give us one. No login, no app.", { x: 0.7, y: 2.2, w: 12, h: 0.5, fontSize: 18, color: C.background1 });
@@ -63,7 +74,7 @@ if (ex2) s.addImage({ path: ex2, x: 8.3, y: 3.0, w: 4.6, h: 3.6, sizing: { type:
 
 // 4 Architecture
 pres.addSection({ title: "Technology" });
-s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Technology" });
+s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Technology" }); titleAccent(s, THEME.colors.accent2);
 s.addText("A pipeline, not a prompt", { placeholder: "title" });
 const steps = [["Photo", "phone or gate camera", THEME.colors.accent5], ["Detect", "YOLO-World boxes: truck, trailer, cargo, car, plate, person. YOLOv8-seg truck mask. Pretrained, no training.", THEME.colors.accent2],
   ["Blur", "plates and people pixelated before storage or display", THEME.colors.accent4], ["Measure", "wheel finder, ground line, body verticals vs scene verticals, scale from 2.55 m body or 1.05 m wheel", THEME.colors.accent1],
@@ -78,7 +89,7 @@ card(s, 0.5, 5.2, 6.0, 1.6, "Ours", "Privacy stage, wheel finder, geometry, deci
 card(s, 6.8, 5.2, 6.0, 1.6, "Borrowed, with attribution", "Two pretrained Ultralytics models (AGPL-3.0). Open-vocabulary prompts, no fine-tuning needed for the demo. Runs on CPU in 0.19 s per image.", THEME.colors.accent5);
 
 // 5 Relative to what
-s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Technology" });
+s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Technology" }); titleAccent(s, THEME.colors.accent2);
 s.addText("Measured relative to the truck itself, so a phone photo is honest", { placeholder: "title" });
 const pics = [["../eval/out/flatbed_13_08_09_hongkong_by_RalfR_016_jpg.jpg", "Body roll", "Green: the body's vertical edges. Cyan: vertical lines in the scene. The angle between them is the roll, so a tilted phone does not tilt the truck.", THEME.colors.accent2],
   ["../eval/out/car_carrier_Ram_3500_DS_Towing_BMW_X5_F15_JPG.jpg", "Overhang", "Red: cargo beyond the body edge, converted to centimetres with the 1.05 m wheel or the 2.55 m body width in the same photo.", THEME.colors.accent4],
@@ -90,7 +101,7 @@ TB(s, "Every number is relative to an object in the same photo. No camera calibr
 TB(s, "Photos: Wikimedia Commons, Ralf Roletschek (CC BY 3.0); Bull-Doser (Public domain); Bob Adams from George, South Africa (CC BY-SA 2.0). Annotations drawn by the pipeline.", { x: 0.5, y: 6.6, w: 12.3, h: 0.35, fontSize: 8, color: THEME.colors.accent5 });
 
 // 6 Quality
-s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Technology" });
+s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Technology" }); titleAccent(s, THEME.colors.accent2);
 s.addText("Measured on a test set we built, including the bad news", { placeholder: "title" });
 const hdr = (t) => ({ text: t, options: { bold: true, color: C.background1, fill: { color: THEME.colors.dk2 }, fontSize: 12 } });
 const rows1 = [[hdr("Subset"), hdr("Images"), hdr("Truck found"), hdr("Wheels"), hdr("Scale"), hdr("Roll reported")],
@@ -104,7 +115,7 @@ const stat = (x, big, small) => { TB(s, big, { x, y: 4.7, w: 2.9, h: 0.9, fontSi
 stat(0.5, "1.63°", "roll instrument error, 56 rotated level photos at known angles, sign right 93% of the time"); stat(3.6, "0.19 s", "per image on 2 CPU cores, measured on the deployed server"); stat(6.7, "< $0.001", "compute per inspection; one warm server about $90 per month"); stat(9.8, "0 faces", "stored. Plates and people pixelated before anything is kept");
 
 // 7 Failure cases
-s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Technology" });
+s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Technology" }); titleAccent(s, THEME.colors.accent2);
 s.addText("Where it breaks, and what it does instead of guessing", { placeholder: "title" });
 const fails = [["../eval/out/raw/overloaded/" + (fs.existsSync("../eval/out/raw/overloaded") ? fs.readdirSync("../eval/out/raw/overloaded")[0] : ""), "Not a truck, or a tiny truck in the frame. Result: CANNOT ASSESS. The overloaded-vehicles category on Commons is mostly carts and motorbikes."],
   ["../eval/out/raw/car_carrier/car_carrier_080625_A_3715G_225_2668149320_jpg.jpg", "Front or three-quarter views foreshorten the body. Roll confidence drops below the floor and the check is skipped."],
@@ -113,7 +124,7 @@ fails.forEach((f, i) => { const x = 0.5 + i * 4.15; if (img(f[0])) s.addImage({ 
 card(s, 0.5, 5.9, 12.3, 0.95, "Design rule", "Every check reports a confidence and is skipped below a floor. A skipped check is shown as such, never as a pass.", THEME.colors.accent6);
 
 // 8 Replication
-s = pres.addSlide({ masterName: "DARK", sectionTitle: "Technology" });
+s = pres.addSlide({ masterName: "DARK", sectionTitle: "Technology" }); orbs(s, 0);
 TB(s, "The replication test", { x: 0.7, y: 0.5, w: 12, h: 0.8, fontSize: 36, bold: true, color: C.background1, fontFace: THEME.headFontFace });
 TB(s, "A weekend with the same tools gets you", { x: 0.7, y: 1.5, w: 5.8, h: 0.5, fontSize: 18, bold: true, color: THEME.colors.accent5 });
 TB(s, bullets(["A detector that draws boxes around trucks and cargo", "A prompt to a vision model that says \"looks overloaded\"", "No measurement, no threshold, no number a gate operator can act on"]), { x: 0.7, y: 2.1, w: 5.8, h: 3.5, fontSize: 15, color: C.background1, isTextBox: true, margin: 0, valign: "top" });
@@ -122,7 +133,7 @@ TB(s, bullets(["Perspective-safe roll from vertical edges, with a gravity refere
 
 // 9 Budget and ROI
 pres.addSection({ title: "Business" });
-s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Business" });
+s = pres.addSlide({ masterName: "LIGHT", sectionTitle: "Business" }); titleAccent(s, THEME.colors.accent3);
 s.addText("Pilot budget and payback, every assumption on the slide", { placeholder: "title" });
 const rows3 = [[hdr("Pilot cost, 3 months"), hdr("Amount"), hdr("Assumption")],
   ["Team: 3 people, 3 months", "$7,200", "$800 per person per month"], ["Cameras and mounts, 3 gates", "$600", "$200 per gate, one-off"], ["Hosting", "$270", "one warm CPU server, $90 per month"],
@@ -136,10 +147,32 @@ card(s, 0.5, 4.6, 6.3, 2.2, "Unit economics", "Price per gate per month, softwar
 card(s, 7.0, 4.6, 5.8, 2.2, "Payback", "Pilot cost $8,570 (team $7,200 + cameras $600 + hosting $270 + labelling $500). Avoided loss $5,000 per month at one caught incident a month. Payback = 8,570 / 5,000 = 1.7 months, inside the pilot itself. The fleet's own incident rate replaces the assumption after month one.", THEME.colors.accent3);
 
 // 10 Next steps
-s = pres.addSlide({ masterName: "DARK", sectionTitle: "Business" });
+s = pres.addSlide({ masterName: "DARK", sectionTitle: "Business" }); orbs(s, 1);
 TB(s, "Next steps", { x: 0.7, y: 0.5, w: 12, h: 0.8, fontSize: 36, bold: true, color: C.background1, fontFace: THEME.headFontFace });
 const nx = [["Month 1", "Fixed, calibrated camera at one gate. Reference marker removes scale ambiguity. Ten-second video mode."], ["Month 2", "Fine-tune the detector on our labelled set. Add open door, loose strap and missing marking classes."], ["Month 3", "Weighbridge and dispatch integration. Pilot at a Royal Motors receiving yard on incoming car carriers."]];
 nx.forEach((n, i) => { const x = 0.7 + i * 4.1; s.addShape(pres.ShapeType.rect, { x, y: 1.7, w: 3.8, h: 3.2, fill: { color: THEME.colors.dk2 }, line: { color: THEME.colors.dk2, width: 0 } }); TB(s, n[0], { x: x + 0.3, y: 1.9, w: 3.2, h: 0.5, fontSize: 20, bold: true, color: THEME.colors.accent1 }); TB(s, n[1], { x: x + 0.3, y: 2.5, w: 3.2, h: 2.2, fontSize: 14, color: C.background1, valign: "top" }); });
 TB(s, "Repository: github.com/Winner-121/Destroyerrrrs_Final_Stage   ·   Demo: amir-kuldashev--load-safety-gate-web.modal.run", { x: 0.7, y: 5.4, w: 12, h: 0.5, fontSize: 13, color: THEME.colors.accent5 });
 
-(async () => { await pres.writeFile({ fileName: "LoadSafetyGate_deck.pptx" }); await applyTheme("LoadSafetyGate_deck.pptx", THEME); console.log("written"); })();
+// 11 Closing
+s = pres.addSlide({ masterName: "DARK", sectionTitle: "Business" }); orbs(s, 1);
+TB(s, "Questions?", { x: 0.7, y: 1.6, w: 7.5, h: 1.3, fontSize: 60, bold: true, color: C.background1, fontFace: THEME.headFontFace });
+TB(s, "Open the gate on your phone right now:", { x: 0.7, y: 3.1, w: 7.5, h: 0.5, fontSize: 18, color: THEME.colors.accent5 });
+TB(s, "amir-kuldashev--load-safety-gate-web.modal.run", { x: 0.7, y: 3.6, w: 7.7, h: 0.6, fontSize: 16, color: THEME.colors.accent1, fontFace: "Courier New" });
+TB(s, "github.com/Winner-121/Destroyerrrrs_Final_Stage", { x: 0.7, y: 4.2, w: 7.5, h: 0.5, fontSize: 16, color: THEME.colors.accent5, fontFace: "Courier New" });
+pill(s, "GO", 0.7, 5.2, 1.6, THEME.colors.accent3); pill(s, "WARN", 2.5, 5.2, 1.6, THEME.colors.accent6); pill(s, "NO-GO", 4.3, 5.2, 1.6, THEME.colors.accent4);
+if (img("dancing_cat.gif")) s.addImage({ path: "dancing_cat.gif", x: 8.5, y: 1.4, w: 4.4, h: 4.4 });
+TB(s, "Team Destroyerrrrs, thank you", { x: 8.5, y: 5.9, w: 4.4, h: 0.4, fontSize: 14, align: "center", color: THEME.colors.accent5 });
+
+// fade transition on every slide (pptxgenjs has no transition API, so patch the slide XML)
+async function addTransitions(file) {
+  const JSZip = require("jszip");
+  const zip = await JSZip.loadAsync(fs.readFileSync(file));
+  for (const name of Object.keys(zip.files).filter(n => /^ppt\/slides\/slide\d+\.xml$/.test(n))) {
+    let xml = await zip.file(name).async("string");
+    if (!xml.includes("<p:transition")) xml = xml.replace("</p:clrMapOvr>", '</p:clrMapOvr><p:transition spd="med"><p:fade/></p:transition>');
+    zip.file(name, xml);
+  }
+  fs.writeFileSync(file, await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" }));
+}
+
+(async () => { await pres.writeFile({ fileName: "LoadSafetyGate_deck.pptx" }); await applyTheme("LoadSafetyGate_deck.pptx", THEME); await addTransitions("LoadSafetyGate_deck.pptx"); console.log("written"); })();
