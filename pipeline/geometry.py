@@ -190,6 +190,14 @@ def measure(det: Detections, img_shape, img: np.ndarray | None = None) -> Measur
         overlap = ix * iy / max(1, b.w * b.h)                      # share of the cargo box inside the truck box
         return inside_x and bottom_ok and above_ground and not_whole_truck and overlap >= 0.5
     cargo = [b for b in det.by_label("cargo", "container", "tarpaulin", "car") if _on_truck(b)]
+    # a vehicle carried on the deck is often detected as a second "truck"; it is cargo if it rests on the main truck
+    for b in det.by_label("truck", "trailer"):
+        if b is tb or b is veh or b.conf < 0.25 or b.h >= 0.8 * tb.h or b.w >= 0.9 * tb.w:
+            continue
+        ix = max(0, min(b.xyxy[2], tb.xyxy[2]) - max(b.xyxy[0], tb.xyxy[0]))
+        rests = tb.xyxy[1] <= b.bottom <= tb.xyxy[3] + 0.05 * tb.h
+        if ix >= 0.6 * b.w and rests and b.xyxy[1] < tb.xyxy[1] + 0.5 * tb.h:
+            cargo.append(b); M.notes.append("cargo: carried vehicle detected as a truck box")
     if cargo and det.truck_mask is not None:
         big = max(cargo, key=lambda b: b.w * b.h)
         # cargo extent = union of all cargo boxes on the truck (several cars on a carrier)

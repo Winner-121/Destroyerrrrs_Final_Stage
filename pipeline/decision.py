@@ -33,6 +33,12 @@ def decide(M: Measurements) -> Decision:
     # roll
     if M.roll_deg is None:
         D.checks.append(Check("Body roll", "skip", "n/a", 0, "edges not found"))
+    elif M.roll_conf < T["roll_min_conf"] and M.view == "unknown" and abs(M.roll_deg) >= T["roll_fail_deg"] and M.roll_conf >= T.get("roll_oblique_min_conf", 0.35):
+        # oblique view, so the angle is not trusted as a measurement, but a reading this large is a warning, not silence.
+        # On the labelled set no level truck in an oblique view reached this (0 of 12), so it costs no false alarm there.
+        side = "right" if M.roll_deg > 0 else "left"
+        D.checks.append(Check("Body roll", "warn", f"~{abs(M.roll_deg):.0f}° {side}", M.roll_conf,
+                              "oblique view: strong tilt measured, confirm with a side photo before release"))
     elif M.roll_conf < T["roll_min_conf"]:
         D.checks.append(Check("Body roll", "skip", f"({abs(M.roll_deg):.1f}°)", M.roll_conf,
                               "low confidence: need a clear side view with wheels visible"))

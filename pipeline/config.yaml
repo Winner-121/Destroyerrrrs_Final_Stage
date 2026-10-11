@@ -17,6 +17,7 @@ thresholds:                           # Uzbekistan: Cabinet of Ministers Decree 
                                       # or cargo protrudes > 2 m beyond the rear of the body. Source: gov.uz/ru/uzavtoyul/sections/view/48313
   roll_min_conf: 0.5                 # below this the roll check is skipped, not reported
   roll_warn_deg: 4.0
+  roll_oblique_min_conf: 0.35       # oblique view: a reading >= roll_fail_deg at this confidence is a WARN, never a fail
   roll_fail_deg: 7.0
   side_overhang_fail_cm: 20           # cargo wider than body by this -> NO-GO
   rear_overhang_warn_cm: 100          # must be marked beyond this

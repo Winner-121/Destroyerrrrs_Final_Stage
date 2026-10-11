@@ -45,7 +45,8 @@ def find_wheels(img: np.ndarray, mask: np.ndarray, tb: Box) -> list[Box]:
     # by width there; the box height is unreliable because a tall load is often inside the truck mask.
     tw = max(x2 - x1, 1)
     side = tw / th >= 1.6
-    rmax_px = th * 0.22 if not side else min(th * 0.22, tw * 0.11)
+    low = tw / th >= 2.7                                            # very wide and low silhouette: a flatbed, wheels ~40 % of body height
+    rmax_px = th * 0.22 if not side else min(th * (0.28 if low else 0.22), tw * 0.11)
     rmin_px = th * 0.05
     rmin, rmax = max(5, int(rmin_px * f)), max(6, int(rmax_px * f))
     c = cv2.HoughCircles(g, cv2.HOUGH_GRADIENT, dp=1.2, minDist=int(ths * 0.15), param1=120, param2=30,
